@@ -48,32 +48,36 @@ function xmldb_skillsoft_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     $result = true;
-    
-    
+
+
 //	// Adding missing 'intro' and 'introformat' field to table skillsoft
     if ($result && $oldversion < 2011080100) {
         $table = new xmldb_table('skillsoft');
         $summaryfield = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
-        
+
 	    /// Launch rename field summary
         $dbman->rename_field($table, $summaryfield, 'intro');
-        
-        
+
+
         //Add intr0format
         $introformatfield = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '1', 'intro');
 		if (!$dbman->field_exists($table,$introformatfield)) {
-        	$dbman->add_field($table, $introformatfield);		
+        	$dbman->add_field($table, $introformatfield);
 		}
 
 		upgrade_mod_savepoint(true, 2011080100, 'skillsoft');
         $result = true;
-    }  
-    
+    }
+
     if ($result && $oldversion < 2011080500) {
     	upgrade_mod_savepoint(true, 2011080500, 'skillsoft');
     	$result = true;
     }
-    
-    
+
+    if ($result && $oldversion < 2011080600) {
+	    	upgrade_mod_savepoint(true, 2011080600, 'skillsoft');
+	    	$result = true;
+    }
+
 	return $result;
 }
