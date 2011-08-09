@@ -144,7 +144,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 	$element = "";
 
 	/* We need logic here that if SSO url defined we use this */
-	if (!$CFG->skillsoft_usesso) {
+	if (!$CFG->skillsoft_usesso && strtolower($skillsoft->assetid) != 'sso') {
 		//skillsoft_ssourl is not defined so do AICC
 		$newkey = skillsoft_create_sessionid($user->id, $skillsoft->id);
 		$launcher = $skillsoft->launch.$connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';

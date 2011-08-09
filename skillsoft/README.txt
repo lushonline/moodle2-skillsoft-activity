@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
 Updated: August 2011
-Module Version: 2011080500
+Module Version: 2011080601
 ================================================================
 
 Moodle Compatibility
@@ -16,7 +16,6 @@ Known Issues/Limitations
 ------------------------
 * Backup and Restore have not been implemented in this release
 * Support for Multiple Completions when using "Track to OLSA" is only supported using the "Custom Report" mode.
-* Online help details are not 100% complete
 
 Upgrading from Moodle 1.9.x
 ---------------------------

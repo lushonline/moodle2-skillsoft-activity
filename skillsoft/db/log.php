@@ -30,5 +30,5 @@ $logs = array(
     array('module'=>'skillsoft', 'action'=>'add', 'mtable'=>'skillsoft', 'field'=>'name'),
     array('module'=>'skillsoft', 'action'=>'update', 'mtable'=>'skillsoft', 'field'=>'name'),
     array('module'=>'skillsoft', 'action'=>'view', 'mtable'=>'skillsoft', 'field'=>'name'),
-	array('module'=>'skillsoft', 'action'=>'viewall', 'mtable'=>'skillsoft', 'field'=>'name')
+	array('module'=>'skillsoft', 'action'=>'view all', 'mtable'=>'skillsoft', 'field'=>'name')
 );
