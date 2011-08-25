@@ -119,19 +119,49 @@ $waitimage = '<p><img src="'. $OUTPUT->pix_url('wait', 'skillsoft').'" class="ic
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title><?php echo get_string('skillsoft_ssotitle', 'skillsoft');?></title>
 <script type="text/javascript">
-	//<![CDATA[
 	function doit() {
-		<?php 	if ($response->success) {
-			print "document.location = ".'"'.$response->result->olsaURL.'";';
+		<?php
+		if ($response->success) {
+			print "debugger;";
+			print "var popupBlocker = false;\n";
+			print "var win = window.open('".$response->result->olsaURL."','_blank');\n";
+			print "try {\n";
+			print "win.focus();\n";
+			print "}\n";
+			print "catch(e) {\n";
+			print "popupBlocker = true;\n";
+			print "}\n";
+			
+			print "if (popupBlocker) {\n";
+			print "var errorDiv = document.getElementById('errormessage');\n";
+			print "errorDiv.innerHTML = '".get_string('skillsoft_ssopopupdetected','skillsoft')."';\n";
+			//print "var olsaURL = document.createElement('a');\n";
+			//print "olsaURL.setAttribute('id','olsalaunchurl');\n";
+			//print "olsaURL.setAttribute('href','".$response->result->olsaURL."');\n";
+			//print "olsaURL.innerHTML = 'Click Here';\n";
+			//print "errorDiv.appendChild(olsaURL);\n";
+			print "errorDiv.style.display = 'block';\n";
+			print "document.getElementById('waitingmessage').style.display = 'none';\n";			
+			print "} else { \n";
+			print "var errorDiv = document.getElementById('errormessage');\n";
+			print "errorDiv.innerHTML = '".get_string('skillsoft_ssopopupopened','skillsoft')."';\n";
+			print "errorDiv.style.display = 'block';\n";
+			print "document.getElementById('waitingmessage').style.display = 'none';\n";			
+			print "//Close the window after 5 seconds";
+			print "window.open('', '_self', '');\n";
+			print "window.setTimeout('window.close();', 5000);\n";
+			print "}\n";
+			//print "document.location = ".'"'.$response->result->olsaURL.'";';
 		} else {
 			//error($response->errormessage);
+			
 			print "document.getElementById('waitingmessage').style.display = 'none';";
 			print "document.getElementById('errormessage').style.display = 'block';";
 		}
 		?>	
 	}
 
-	//]]>
+
 </script>
 </head>
 <body onload="doit();">

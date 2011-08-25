@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
 Updated: August 2011
-Module Version: 2011080601
+Module Version: 2011080602
 ================================================================
 
 Moodle Compatibility

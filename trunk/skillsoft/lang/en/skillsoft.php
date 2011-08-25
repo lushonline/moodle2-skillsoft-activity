@@ -307,6 +307,10 @@ $string['skillsoft_ssoloading'] = 'Please wait while we log you into SkillPort';
 $string['skillsoft_ssoerror'] = 'An error has occurred while trying to perform Skillport login. Details:';
 $string['skillsoft_ssomodeerror'] = 'SkillPort seamless login is only available in Track to OLSA mode.';
 
+$string['skillsoft_ssopopupopened'] = 'This window will automatically close in 5 seconds.<br/>';
+$string['skillsoft_ssopopupdetected'] = 'A popup blocker prevented the completion of this launch.<br/>Please disable your popup blocker and try again.<br/>';
+
+
 //getolsadata.php - SSO
 $string['skillsoft_ssoassettitle'] = 'Login to SkillPort';
 $string['skillsoft_ssoassetsummary'] = 'Login to SkillPort seamlessly';
