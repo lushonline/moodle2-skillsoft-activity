@@ -928,7 +928,9 @@ function skillsoft_run_customreport($trace=false, $prefix='    ', $includetoday=
 		//The enddate has already been retrieved so do nothing
 		mtrace($mprefix.get_string('skillsoft_customreport_run_alreadyrun','skillsoft'));
 	} else {
-		$initresponse = UD_InitiateCustomReportByUserGroups('skillsoft',$startdate,$enddate);
+		//$initresponse = UD_InitiateCustomReportByUserGroups('skillsoft',$startdate,$enddate);
+		$initresponse = UD_InitiateCustomReportByUsers('',$startdate,$enddate);
+		
 		if ($initresponse->success) {
 			$handle = $initresponse->result->handle;
 			$id=skillsoft_insert_customreport_requested($handle,$startdate,$enddate);

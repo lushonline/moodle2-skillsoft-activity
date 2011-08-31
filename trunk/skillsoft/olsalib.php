@@ -1091,6 +1091,98 @@ function UD_InitiateCustomReportByUserGroups($group,$startDate='',$endDate='',$d
 }
 
 /**
+ * Create a Custom Report by Users
+ *
+ * @param string $username the SkillPort User or blank for all users
+ * @param string $startDate the Startdate for the scope of the report
+ * @param string $endDate the Enddate for the scope of the report
+ * @param string $dateToUse the date field used for the scope, valid values are any (default), first - First Access Date, most - Most Recent Access Date, completion - Completion Date
+ * @param string $listBy the order to list users by, valid values are user, course
+ * @param bool $includeDeactivatedUsers include users deactivated in SkillPort
+ * @param string $reportFormat format for the report, valid values are CSV, CSV16 and HTML
+ * @return olsasoapresponse olsasoapresponse->result. result->handle is the report handle used for polling
+ */
+function UD_InitiateCustomReportByUsers($username='',$startDate='',$endDate='',$dateToUse='any',$listBy='user',$includeDeactivatedUsers=true,$reportFormat='CSV') {
+	global $CFG;
+
+	if (!isolsaconfigurationset()) {
+		$response = new olsaresponse(false,get_string('skillsoft_olsasettingsmissing','skillsoft'),NULL);
+	} else {
+
+		//Set local OLSA Variables
+		$endpoint = $CFG->skillsoft_olsaendpoint;
+		$customerId = $CFG->skillsoft_olsacustomerid;
+		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
+
+
+		//Specify the WSDL using the EndPoint
+		$wsdlurl = $endpoint.'?WSDL';
+
+		//Specify the SOAP Client Options
+		$options = array(
+			"trace"      => 1,
+			"exceptions" => 0,
+			"soap_version"   => SOAP_1_2,
+			"cache_wsdl" => WSDL_CACHE_BOTH,
+			"encoding"=> "UTF-8"
+			);
+
+			//Create a new instance of the OLSA Soap Client
+			$client = new olsa_soapclient($wsdlurl,$options);
+
+			//Create the USERNAMETOKEN
+			$client->__setUsernameToken($customerId,$sharedsecret);
+
+
+
+			//Create the Request
+			$InitiateCustomReportByUsersRequest =  array(
+				"customerId" => $customerId,
+				"includeDeactivatedUsers" => $includeDeactivatedUsers,
+				"reportFormat" => $reportFormat,
+				"listBy" => $listBy,
+				"dateToUse" => $dateToUse,
+				"username" => $username,
+			);
+
+			//If we have BOTH dates specified then we use them
+			if (!empty($startDate)){
+				if ($starttimestamp = strtotime($startDate)) {
+					$InitiateCustomReportByUserGroupsRequest["startDate"] = date('Y-m-d', $starttimestamp);
+				}
+			}
+			if (!empty($endDate)){
+				if ($endtimestamp = strtotime($endDate)) {
+					$InitiateCustomReportByUserGroupsRequest["endDate"] = date('Y-m-d', $endtimestamp);
+				}
+			}
+
+
+
+
+			//Call the WebService and stored result in $result
+			$result=$client->__soapCall('UD_InitiateCustomReportByUsers',array('parameters'=>$InitiateCustomReportByUsersRequest));
+
+			if (is_soap_fault($result)) {
+				echo $client->__getLastRequest();
+				if (!stripos($result->getmessage(),'security token could not be authenticated or authorized') == false) {
+					//Authentication Failure
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapauthentication','skillsoft'),NULL);
+				} elseif (isset($result->detail->NoResultsAvailableFault)) {
+					$response = new olsaresponse(false,get_string('skillsoft_odcnoresultsavailable','skillsoft'),NULL);
+				} else {
+					//General SOAP Fault
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapfault','skillsoft',$result->getmessage()),NULL);
+				}
+			} else {
+				$response = new olsaresponse(true,'',$result);
+			}
+	}
+	return $response;
+}
+
+
+/**
  * Polls for the specified report handle
  *
  * @param string $handle the report handle to poll for

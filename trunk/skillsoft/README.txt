@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
 Updated: August 2011
-Module Version: 2011080602
+Module Version: 2011090100
 ================================================================
 
 Moodle Compatibility
@@ -19,7 +19,7 @@ Known Issues/Limitations
 
 Upgrading from Moodle 1.9.x
 ---------------------------
-It is neccesary to first upgrade the existing SkillSoft module to 2011073100
+It is neccesary to first upgrade the existing SkillSoft module to 20110731xx
 http://code.google.com/p/moodle-skillsoft-activity/downloads/list
 
 After updating the module and allowing Moodle to apply the module changes, you
