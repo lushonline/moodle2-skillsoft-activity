@@ -122,7 +122,6 @@ $waitimage = '<p><img src="'. $OUTPUT->pix_url('wait', 'skillsoft').'" class="ic
 	function doit() {
 		<?php
 		if ($response->success) {
-			print "debugger;";
 			print "var popupBlocker = false;\n";
 			print "var win = window.open('".$response->result->olsaURL."','_blank');\n";
 			print "try {\n";
