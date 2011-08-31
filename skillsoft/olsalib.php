@@ -108,7 +108,7 @@ class olsa_soapclient extends SoapClient{
 	/* Helper function
 	 * used for download WSDL files locally to work around poor proxy support in soapclient
 	 * Downloaded files are cached and only redownloaded when cache is stale
-	 * 
+	 *
 	 * @param string $url - Full URL to download
 	 * @param string $filename - Filename to save to
 	 * @param string $cachefolder - Folder to store downloads
@@ -215,10 +215,10 @@ class olsa_soapclient extends SoapClient{
 	 * Loads an XML file (olsa.wsdl/*.xsd) and extracts the paths to embedded scema files
 	 * and recursively downloads these and stores them. Updating the XML document with new
 	 * paths.
-	 * 
+	 *
 	 * This is needed as SOAPClient needs to be able to resolve all files referenced in WSDL
 	 * and when accessing internet via Proxy this is not possible.
-	 * 
+	 *
 	 * @param string $filepath - Fullpath to XML to process
 	 * @param string $basepath - The basepath of the XML we are processing. This is needed when
 	 *  							schema reference is relative.
@@ -1148,12 +1148,12 @@ function UD_InitiateCustomReportByUsers($username='',$startDate='',$endDate='',$
 			//If we have BOTH dates specified then we use them
 			if (!empty($startDate)){
 				if ($starttimestamp = strtotime($startDate)) {
-					$InitiateCustomReportByUserGroupsRequest["startDate"] = date('Y-m-d', $starttimestamp);
+					$InitiateCustomReportByUsersRequest["startDate"] = date('Y-m-d', $starttimestamp);
 				}
 			}
 			if (!empty($endDate)){
 				if ($endtimestamp = strtotime($endDate)) {
-					$InitiateCustomReportByUserGroupsRequest["endDate"] = date('Y-m-d', $endtimestamp);
+					$InitiateCustomReportByUsersRequest["endDate"] = date('Y-m-d', $endtimestamp);
 				}
 			}
 
