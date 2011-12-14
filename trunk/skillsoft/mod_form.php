@@ -39,7 +39,7 @@ $PAGE->requires->js('/mod/skillsoft/md5.js');
 class mod_skillsoft_mod_form extends moodleform_mod {
 
 	function definition() {
-		global $form;
+		global $form, $CFG;
 
 		$mform = $this->_form;
 	
@@ -55,18 +55,9 @@ class mod_skillsoft_mod_form extends moodleform_mod {
     		$mform->addRule('assetid', null, 'required', null, 'client');
 			$mform->addRule('assetid', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 			$mform->addHelpButton('assetid', 'skillsoft_assetid', 'skillsoft');
-			
-			
-			//$mform->setHelpButton('assetid',array('assetid', get_string('skillsoft_assetid', 'skillsoft'), 'skillsoft'));
-
         } else {
         	$mform->addElement('hidden', 'assetid', NULL, array('id'=>'id_assetid'));
         }
-
-
-		//Dont allow change of assetid if we have saved this
-		//$mform->disabledIf('assetid', 'timemodified','neq','');
-
 
 		//Button to get data from OLSA
 		//pass assetid to page
@@ -90,7 +81,6 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 			);
 			$mform->addElement('button', 'getolsa', get_string('skillsoft_updatemetadata', 'skillsoft'), $buttonattributes);
          }
-		//$mform->setHelpButton('getolsa',array('retrievemetadata', get_string('skillsoft_retrievemetadata', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('getolsa', 'skillsoft_retrievemetadata', 'skillsoft');
 		
 		// Name
@@ -102,40 +92,29 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 		}
 		$mform->addRule('name', null, 'required', null, 'client');
 		$mform->addHelpButton('name', 'skillsoft_name', 'skillsoft');
-		//$mform->setHelpButton('name',array('title', get_string('skillsoft_name', 'skillsoft'), 'skillsoft'));
 
 		$this->add_intro_editor(true, get_string('skillsoft_summary', 'skillsoft'));
 		
 		// Summary
-		//$mform->addElement('htmleditor', 'summary', get_string('skillsoft_summary','skillsoft'),array('id'=>'summary'));
-		//$mform->setType('summary', PARAM_RAW);
-		//$mform->addRule('summary', get_string('required'), 'required', null, 'client');
 		$mform->addHelpButton('introeditor', 'skillsoft_summary', 'skillsoft');
-		//$mform->setHelpButton('summary',array('overview', get_string('skillsoft_summary', 'skillsoft'), 'skillsoft'));
 
 		// Audience
 		$mform->addElement('htmleditor', 'audience', get_string('skillsoft_audience','skillsoft'), array('rows'=>'15', 'cols'=>'80'));
 		$mform->setType('audience', PARAM_RAW);
-		//$mform->setHelpButton('audience',array('audience', get_string('skillsoft_audience', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('audience', 'skillsoft_audience', 'skillsoft');
 
 		// Pre-Requisites
 		$mform->addElement('htmleditor', 'prereq', get_string('skillsoft_prereq','skillsoft'),array('rows'=>'15', 'cols'=>'80'));
 		$mform->setType('prereq', PARAM_RAW);
-		//$mform->setHelpButton('prereq',array('prereq', get_string('skillsoft_prereq', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('prereq', 'skillsoft_prereq', 'skillsoft');
 
 		// Duration
 		$mform->addElement('text', 'duration', get_string('skillsoft_duration','skillsoft'));
 		$mform->setType('duration', PARAM_INT);
-		//$mform->setHelpButton('duration',array('duration', get_string('skillsoft_duration', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('duration', 'skillsoft_duration', 'skillsoft');
 
 		// Asset Type
 		$mform->addElement('hidden', 'assettype', null);
-		//$mform->addElement('text', 'assettype', get_string('skillsoft_assettype','skillsoft'));
-		//$mform->setType('assettype', PARAM_RAW);
-		//$mform->setHelpButton('assettype',array('assettype', get_string('skillsoft_assettype', 'skillsoft'), 'skillsoft'));
 
 		// Launch URL
 
@@ -166,10 +145,10 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 
 
 		//Time modified
-		$mform->addElement('hidden', 'timemodified', isset($timemodified) ? $timemodifed : '');
-		$mform->addElement('hidden', 'timecreated', isset($timecreated) ? $timecreated : '');
-		$mform->addElement('hidden', 'completable', isset($completable) ? $completable : '');
-
+		$mform->addElement('hidden', 'timemodified');
+		$mform->addElement('hidden', 'timecreated');
+		$mform->addElement('hidden', 'completable');
+		
 		//-------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------
 		$features = new stdClass;
