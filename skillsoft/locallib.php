@@ -209,7 +209,8 @@ function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
 		$track->skillsoftid = $skillsoftid;
 		$track->attempt = $attempt;
 		$track->element = $element;
-		$track->value = addslashes($value);
+		//$track->value = addslashes($value);
+		$track->value = $value;
 		$track->timemodified = time();
 		$id = $DB->insert_record('skillsoft_au_track',$track);
 	}
@@ -509,6 +510,13 @@ function skillsoft_insert_tdr($rawtdr) {
 	$tdr->tdrid = $rawtdr->id;
 
 	//Convert TimeStamp
+	//Define variables that are passed to sscanf
+	$year;
+	$month;
+	$day;
+	$hour;
+	$min;
+	$sec;
 	sscanf($rawtdr->timestamp,"%u-%u-%uT%u:%u:%uZ",$year,$month,$day,$hour,$min,$sec);
 	$tdr->timestamp = mktime($hour,$min,$sec,$month,$day,$year);
 
