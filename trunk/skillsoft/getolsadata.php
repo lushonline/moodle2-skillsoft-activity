@@ -29,6 +29,8 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/olsalib.php');
 
+require_login();
+
 $id = required_param('assetid', PARAM_TEXT);       // AssetID
 
 if (empty($id)) {
