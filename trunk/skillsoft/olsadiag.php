@@ -17,8 +17,6 @@
 
 
 /**
- * Retrieve the Asset metadata from the SkillSoft OLSA server
- * and update the create/edit form using Javascript.
  *
  * @package   mod-skillsoft
  * @author    Martin Holden
@@ -30,6 +28,22 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/olsalib.php');
 
 global $CFG;
+
+$url = new moodle_url('/mod/skillsoft/olsadiag.php');
+$context = get_context_instance(CONTEXT_SYSTEM);
+
+require_login();
+require_capability('moodle/site:config', $context);
+
+//Display the page header
+$pagetitle = 'OLSA Diagnostics';
+$PAGE->set_context($context);
+$PAGE->set_url($url);
+$PAGE->set_title($pagetitle);
+$PAGE->set_heading($pagetitle);
+$PAGE->navbar->add($pagetitle);
+echo $OUTPUT->header();
+echo $OUTPUT->heading($pagetitle);
 
 //Report all PHP errors
 error_reporting(E_ALL);
@@ -111,172 +125,205 @@ function getservertime() {
 	}
 }
 
+echo $OUTPUT->box('This page will perform some basic tests to confirm Moodle Module is able to access SkillSoft OLSA Servers', 'generalbox boxaligncenter boxwidthwide', 'summary');
 
-
-
-
-
-echo ('<h1>Perfoming Basic OLSA Diagnostics</h1>');
-echo ('<p>This page will perform some basic tests to confirm Moodle Module is able to access SkillSoft OLSA Servers</p>');
 
 if (!empty($CFG->proxyhost)) {
-	echo ('<h2>Moodle Proxy Configuration Details</h2>');
-	echo ('<p>Moodle is configured to connect to the internet using the following proxy server details.</p>');
-	echo ('Proxy Host: '.$CFG->proxyhost.$br);
-	echo ('Proxy Port: '.$CFG->proxyport.$br);
+	$html = '';
+	$html .= 'Moodle is configured to connect to the internet using the following proxy server details.';
+	$html .= $br;
+	$html .='Proxy Host: '.$CFG->proxyhost;
+	$html .= $br;
+	$html .= 'Proxy Port: '.$CFG->proxyport;
+	$html .= $br;
 	if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-		echo ('Proxy Authentication: true'.$br);
+		$html .= 'Proxy Authentication: true';
+		$html .= $br;
 	}
-	echo ('<hr/>'.$br);
+	echo $OUTPUT->box('<h2>'.'Moodle Proxy Configuration Details'.'</h2>'.$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 if ($continue) {
-	echo (testheader($currenttest,'Checking SOAP Extension is loaded').$br);
+	$html = '';
 	if (!extension_loaded('soap')) {
-		echo($fail);
-		echo('SOAP Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://www.php.net/manual/en/book.soap.php">http://www.php.net/manual/en/book.soap.php</a>'.$br);
-		echo('DIAGNOSTICS HALTED'.$br);
-		echo($fontend);
 		$continue = false;
+		$html .= $fail;
+		$html .= 'SOAP Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://www.php.net/manual/en/book.soap.php">http://www.php.net/manual/en/book.soap.php</a>';
+		$html .= $br;
+		$html .= 'DIAGNOSTICS HALTED';
+		$html .= $br;
+		$html .= $fontend;
 	} else {
-		echo($pass);
-		echo('SOAP Extension is loaded.'.$br);
-		echo($fontend);
+		$html .= $pass;
+		$html .= 'SOAP Extension is loaded.';
+		$html .= $br;
+		$html .= $fontend;
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Checking SOAP Extension is loaded').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Checking cURL Extension is loaded').$br);
+	$html = '';
 	if (!extension_loaded('curl')) {
-		echo($fail);
-		echo('cURL Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://www.php.net/manual/en/book.curl.php">http://www.php.net/manual/en/book.curl.php</a>'.$br);
-		echo('DIAGNOSTICS HALTED'.$br);
-		echo($fontend);
 		$continue = false;
+		$html .= $fail;
+		$html .= 'cURL Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://www.php.net/manual/en/book.curl.php">http://www.php.net/manual/en/book.curl.php</a>';
+		$html .= $br;
+		$html .= 'DIAGNOSTICS HALTED';
+		$html .= $br;
+		$html .= $fontend;
 	} else {
-		echo($pass);
-		echo('cURL Extension is loaded.'.$br);
-		echo($fontend);
+		$html .= $pass;
+		$html .= 'cURL Extension is loaded.';
+		$html .= $br;
+		$html .= $fontend;
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Checking cURL Extension is loaded').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Checking OLSA Settings are configured').$br);
+	$html = '';
 	if (!isolsaconfigurationset()) {
-		echo($fail);
-		echo('OLSA Settings are Not Configured. Please ensure you enter the OLSA settings in the module configuration settings'.$br);
-		echo('DIAGNOSTICS HALTED');
-		echo($fontend);
 		$continue = false;
+		$html .= $fail;
+		$html .= 'OLSA Settings are Not Configured. Please ensure you enter the OLSA settings in the module configuration settings';
+		$html .= $br;
+		$html .= 'DIAGNOSTICS HALTED';
+		$html .= $br;
+		$html .= $fontend;
 	} else {
-		echo($pass);
-		echo('OLSA Settings Configured.'.$br);
-		echo($fontend);
-		//Set local OLSA Variables
+		$html .= $pass;
+		$html .= 'OLSA Settings Configured.';
+		$html .= $br;
+		$html .= $fontend;
+		//Set local OLSA Variables used for subsequent tests
 		$endpoint = $CFG->skillsoft_olsaendpoint;
 		$customerId = $CFG->skillsoft_olsacustomerid;
 		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Checking OLSA Settings are configured').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Is OLSA EndPoint Accessible').$br);
-
+	$html = '';
 	if ($content = download_file_content($endpoint.'?WSDL',null,null,true,300,20,true)) {
 		//Check for HTTP 200 response
 		if ($content->status != 200) {
-			echo($fail);
-			echo('OLSA WSDL Can Not Be Accessed'.$br);
-			echo('Current Value: <a target="_blank" href ="'.$endpoint.'?WSDL">'.$endpoint.'</a>'.$br);
+			$continue = false;
+			$html .= $fail;
+			$html .= 'OLSA WSDL Can Not Be Accessed';
+			$html .= $br;
+			$html .= 'Current Value: <a target="_blank" href ="'.$endpoint.'?WSDL">'.$endpoint.'</a>';
+			$html .= $br;
 			if ($content->headers == false) {
 				if (!extension_loaded('openssl') && stripos($endpoint, 'https') === 0) {
-					echo('OLSA EndPoint uses SSL'.$br);
-					echo('OPENSSL Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://uk.php.net/manual/en/book.openssl.php">http://uk.php.net/manual/en/book.openssl.php</a>'.$br);
+					$html .= 'OLSA EndPoint uses SSL';
+					$html .= $br;
+					$html .= 'OPENSSL Extension is not enabled in PHP.INI. To enable please see <a target="_blank" href="http://uk.php.net/manual/en/book.openssl.php">http://uk.php.net/manual/en/book.openssl.php</a>';
+					$html .= $br;
 				} else {
-					echo('No Headers Returned, this typically indicates a networking or DNS resolution issue. Please confirm connectivity and the correct URL is specified.'.$br);
-					echo('Error Message returned by request ='.$content->error.$br);
+					$html .= 'No Headers Returned, this typically indicates a networking or DNS resolution issue. Please confirm connectivity and the correct URL is specified.';
+					$html .= $br;
+					$html .= 'Error Message returned by request ='.$content->error;
+					$html .= $br;
 				}
 			} else {
-				echo('Please ensure you entered the correct URL'.$br.$br);
-				echo('Headers Returned'.$br);
+				$html .= 'Please ensure you entered the correct URL';
+				$html .= $br;
+				$html .= $br;
+				$html .= 'Headers Returned';
+				$html .= $br;
 				foreach ($http_headers as $header) {
-					echo('&nbsp;&nbsp;'.$header.$br);
+					$html .= '&nbsp;&nbsp;'.$header;
+					$html .= $br;
 				}
 			}
-
-			echo('DIAGNOSTICS HALTED'.$br);
-			echo($fontend);
+			$html .= 'DIAGNOSTICS HALTED';
+			$html .= $br;
+			$html .= $fontend;
 			$continue = false;
-		}
-		else {
-			echo($pass);
-			echo('OLSA WSDL Can Be Opened.'.$br);
-			echo($fontend);
+		} else {
+			$html .= $pass;
+			$html .= 'OLSA WSDL Can Be Opened.';
+			$html .= $br;
+			$html .= $fontend;
 		}
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Is OLSA EndPoint Accessible').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Check Time Synchronisation').$br);
+	$html = '';
 	if (!$result = getservertime()) {
-		echo($fail);
-		echo('Unable to retrieve OLSA server time.'.$br);
-		echo('DIAGNOSTICS HALTED');
-		echo($fontend);
 		$continue = false;
+		$html .= $fail;
+		$html .= 'Unable to retrieve OLSA server time.';
+		$html .= $br;
+		$html .= 'DIAGNOSTICS HALTED';
+		$html .= $br;
+		$html .= $fontend;
 	} else {
 		//Now compare with current time.
 		//Is it faster
 		if ($result->isfast) {
-			echo($fail);
-			echo('Moodle Server Time is faster than OLSA Server. The OLSA Authentication Process will fail'.$br);
-			echo('Ensure the Moodle Server Time is synchronised to a reliable time source such as an NTP server <a target="_blank" href ="http://en.wikipedia.org/wiki/Network_Time_Protocol">http://en.wikipedia.org/wiki/Network_Time_Protocol</a>'.$br);
-			echo('Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z'.$br);
-			echo('OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z'.$br);
-			echo('Time difference (OLSA - Moodle): '.$result->diff.' seconds'.$br);
-			echo('DIAGNOSTICS HALTED');
-			echo($fontend);
 			$continue = false;
+			$html .= $fail;
+			$html .= 'Moodle Server Time is faster than OLSA Server. The OLSA Authentication Process will fail';
+			$html .= $br;
+			$html .= 'Ensure the Moodle Server Time is synchronised to a reliable time source such as an NTP server <a target="_blank" href ="http://en.wikipedia.org/wiki/Network_Time_Protocol">http://en.wikipedia.org/wiki/Network_Time_Protocol</a>';
+			$html .= $br;
+			$html .= 'Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z';
+			$html .= $br;
+			$html .= 'OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z';
+			$html .= $br;
+			$html .= 'Time difference (OLSA - Moodle): '.$result->diff.' seconds';
+			$html .= $br;
+			$html .= 'DIAGNOSTICS HALTED';
+			$html .= $br;
+			$html .= $fontend;
 		} else if ($result->isslow) {
-			echo($fail);
-			echo('Moodle Server Time is slower than OLSA Server. The OLSA Authentication Process will fail'.$br);
-			echo('The Moodle Server Time can be no more than '.$result->limit.' seconds slower than OLSA server'.$br);
-			echo('Ensure the Moodle Server Time is synchronised to a reliable time source such as an NTP server <a target="_blank" href ="http://en.wikipedia.org/wiki/Network_Time_Protocol">http://en.wikipedia.org/wiki/Network_Time_Protocol</a>'.$br);
-			echo('Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z'.$br);
-			echo('OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z'.$br);
-			echo('Time difference (OLSA - Moodle): '.$result->diff.' seconds'.$br);
-			echo('DIAGNOSTICS HALTED');
-			echo($fontend);
 			$continue = false;
+			$html .= $fail;
+			$html .= 'Moodle Server Time is slower than OLSA Server. The OLSA Authentication Process will fail';
+			$html .= $br;
+			$html .= 'The Moodle Server Time can be no more than '.$result->limit.' seconds slower than OLSA server';
+			$html .= $br;
+			$html .= 'Ensure the Moodle Server Time is synchronised to a reliable time source such as an NTP server <a target="_blank" href ="http://en.wikipedia.org/wiki/Network_Time_Protocol">http://en.wikipedia.org/wiki/Network_Time_Protocol</a>';
+			$html .= $br;
+			$html .= 'Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z';
+			$html .= $br;
+			$html .= 'OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z';
+			$html .= $br;
+			$html .= 'Time difference (OLSA - Moodle): '.$result->diff.' seconds';
+			$html .= $br;
+			$html .= 'DIAGNOSTICS HALTED';
+			$html .= $br;
+			$html .= $fontend;
 		} else {
-			echo($pass);
-			echo('Server Times are within limits'.$br);
-			echo('Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z'.$br);
-			echo('OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z'.$br);
-			echo('Time difference (OLSA - Moodle): '.$result->diff.' seconds'.$br);
-			echo($fontend);
+			$html .= $pass;
+			$html .= 'Server Times are within limits';
+			$html .= $br;
+			$html .='Moodle Server Time : '.gmdate('Y-m-d\TH:i:s', $result->serverdatetime).'Z';
+			$html .= $br;
+			$html .='OLSA Server Time : '.gmdate('Y-m-d\TH:i:s', $result->olsadatetime).'Z';
+			$html .= $br;
+			$html .='Time difference (OLSA - Moodle): '.$result->diff.' seconds';
+			$html .= $br;
+			$html .= $fontend;
 		}
+
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Check Time Synchronisation').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Create OLSA SOAP Client').$br);
+	$html = '';
 	//Specify the SOAP Client Options
 	$options = array(
 		"trace"      => 1,
@@ -290,41 +337,49 @@ if ($continue) {
 			$client = new olsa_soapclient($endpoint.'?WSDL',$options);
 			//Create the USERNAMETOKEN
 			$client->__setUsernameToken($customerId,$sharedsecret);
-			echo($pass);
-			echo('OLSA SOAP Client Created'.$br);
-			echo($fontend);
+			$html .= $pass;
+			$html .= 'OLSA SOAP Client Created';
+			$html .= $br;
+			$html .= $fontend;
 		} catch (Exception $e) {
-			echo($fail);
-			echo('Exception while creating OLSA SOAP Client'.$br);
-			echo('Exception Details'.$br);
-			echo($e->getMessage());
-			echo('DIAGNOSTICS HALTED');
-			echo($fontend);
 			$continue = false;
+			$html .= $fail;
+			$html .= 'Exception while creating OLSA SOAP Client';
+			$html .= $br;
+			$html .= 'Exception Details';
+			$html .= $br;
+			$html .= $e->getMessage();
+			$html .= $br;
+			$html .= 'DIAGNOSTICS HALTED';
+			$html .= $fontend;
 		}
-		echo ('<hr/>'.$br);
-		echo ($br);
+		echo $OUTPUT->box(testheader($currenttest,'Create OLSA SOAP Client').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
 $currenttest++;
 if ($continue) {
-	echo (testheader($currenttest,'Check OLSA Authentication').$br);
+	$html = '';
 	$pollresponse = UTIL_PollForReport('0');
 	if ($pollresponse->errormessage == get_string('skillsoft_olsassoapauthentication','skillsoft')) {
-		echo($fail);
-		echo('OLSA Credentials are incorrect, or Moodle Server time is incorrect. Please ensure you entered the correct values.'.$br);
-		echo('DIAGNOSTICS HALTED');
-		echo($fontend);
 		$continue = false;
+		$html .= $fail;
+		$html .= 'OLSA Credentials are incorrect, or Moodle Server time is incorrect. Please ensure you entered the correct values.';
+		$html .= $br;
+		$html .= 'DIAGNOSTICS HALTED';
+		$html .= $br;
+		$html .= $fontend;
 	} else {
-		echo($pass);
-		echo('OLSA Credentials are correct.'.$br);
-		echo($fontend);
+		$html .= $pass;
+		$html .= 'OLSA Credentials are correct.';
+		$html .= $br;
+		$html .= $fontend;
+		//Set local OLSA Variables used for subsequent tests
+		$endpoint = $CFG->skillsoft_olsaendpoint;
+		$customerId = $CFG->skillsoft_olsacustomerid;
+		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
 	}
-	echo ('<hr/>'.$br);
-	echo ($br);
+	echo $OUTPUT->box(testheader($currenttest,'Check OLSA Authentication').$html, 'generalbox boxaligncenter boxwidthwide', 'summary');
 }
 
-
-
+echo $OUTPUT->footer();
 ?>
