@@ -83,6 +83,19 @@ function skillsoft_get_sso_asset_actiontype_array(){
 }
 
 /**
+ * Allows re-processing of processed assets during the next cycle
+  * by setting skillsoft_report_results processed filed to 0
+ * @param string $assetid the skillsoft assetid
+ * @return boolean
+ */
+function skillsoft_reset_processed($assetid) {
+    global $DB;
+    $conditions = array("assetid"=>$assetid, "processed"=>1);
+    return $DB->set_field('skillsoft_report_results', 'processed', 0, $conditions);
+}
+
+
+/**
  * Creates a new sessionid key.
  * @param int $userid
  * @param int $skillsoftid

@@ -85,44 +85,50 @@ function skillsoft_add_instance($skillsoft) {
 		//gets the data updated next time CRON runs
 		if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA_CUSTOMREPORT) {
 
-			$conditions = array("assetid"=>$skillsoft->assetid, "processed"=>1);
-			$countofunprocessed = $DB->count_records('skillsoft_report_results',$conditons);
-
-			//We are in "Track to OLSA (Custom Report)"
-			//We get all skillsoft_report_results where assetid match and they have already been processed
-			$limitfrom=0;
-			$limitnum=1000;
-			$params = array($skillsoft->assetid);
-			do {
-				if ($unmatchedreportresults = $DB->get_records_select('skillsoft_report_results','assetid=? and processed=1',$params,'id ASC','*',$limitfrom,$limitnum)) {
-					foreach ($unmatchedreportresults as $reportresults) {
-						$reportresults->processed = 0;
-						$id = $DB->update_record('skillsoft_report_results',$reportresults);
-					}
-				}
-				$limitfrom += 1000;
-			} while (($unmatchedreportresults != false) && ($limitfrom < $countofunprocessed));
+			//Use more efficient method
+			skillsoft_reset_processed($skillsoft->assetid);
+			
+//			$conditions = array("assetid"=>$skillsoft->assetid, "processed"=>1);
+//			$countofunprocessed = $DB->count_records('skillsoft_report_results',$conditons);
+//
+//			//We are in "Track to OLSA (Custom Report)"
+//			//We get all skillsoft_report_results where assetid match and they have already been processed
+//			$limitfrom=0;
+//			$limitnum=1000;
+//			$params = array($skillsoft->assetid);
+//			do {
+//				if ($unmatchedreportresults = $DB->get_records_select('skillsoft_report_results','assetid=? and processed=1',$params,'id ASC','*',$limitfrom,$limitnum)) {
+//					foreach ($unmatchedreportresults as $reportresults) {
+//						$reportresults->processed = 0;
+//						$id = $DB->update_record('skillsoft_report_results',$reportresults);
+//					}
+//				}
+//				$limitfrom += 1000;
+//			} while (($unmatchedreportresults != false) && ($limitfrom < $countofunprocessed));
 		}
 
 		if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA) {
 
-			$conditions = array("assetid"=>$skillsoft->assetid, "processed"=>1);
-			$countofunprocessed = $DB->count_records('skillsoft_tdr',$conditons);
-
-			//We are in "Track to OLSA"
-			//We get all skillsoft_tdr where assetid match and they have already been processed
-			$limitfrom=0;
-			$limitnum=1000;
-			$params = array($skillsoft->assetid);
-			do {
-				if ($unmatchedtdrs = $DB->get_records_select('skillsoft_tdr','assetid=? and processed=1',$params, 'id ASC','*',$limitfrom,$limitnum)) {
-					foreach ($unmatchedtdrs as $tdr) {
-						$tdr->processed = 0;
-						$id = $DB->update_record('skillsoft_tdr',$tdr);
-					}
-				}
-				$limitfrom += 1000;
-			} while (($unmatchedtdrs != false) && ($limitfrom < $countofunprocessed));
+			//Use more efficient method
+			skillsoft_reset_processed($skillsoft->assetid);
+			
+//			$conditions = array("assetid"=>$skillsoft->assetid, "processed"=>1);
+//			$countofunprocessed = $DB->count_records('skillsoft_tdr',$conditons);
+//
+//			//We are in "Track to OLSA"
+//			//We get all skillsoft_tdr where assetid match and they have already been processed
+//			$limitfrom=0;
+//			$limitnum=1000;
+//			$params = array($skillsoft->assetid);
+//			do {
+//				if ($unmatchedtdrs = $DB->get_records_select('skillsoft_tdr','assetid=? and processed=1',$params, 'id ASC','*',$limitfrom,$limitnum)) {
+//					foreach ($unmatchedtdrs as $tdr) {
+//						$tdr->processed = 0;
+//						$id = $DB->update_record('skillsoft_tdr',$tdr);
+//					}
+//				}
+//				$limitfrom += 1000;
+//			} while (($unmatchedtdrs != false) && ($limitfrom < $countofunprocessed));
 		}
 	}
 
@@ -724,13 +730,13 @@ function skillsoft_customreport($includetoday=false) {
 		if ($report->polled == 0) {
 			$state= CUSTOMREPORT_POLL;
 		} else if ($report->downloaded == 0) {
-	 	$state= CUSTOMREPORT_DOWNLOAD;
+	 		$state= CUSTOMREPORT_DOWNLOAD;
 		} else if ($report->imported == 0) {
-	 	$state= CUSTOMREPORT_IMPORT;
+	 		$state= CUSTOMREPORT_IMPORT;
 		} else if ($report->processed == 0) {
-	 	$state= CUSTOMREPORT_PROCESS;
+	 		$state= CUSTOMREPORT_PROCESS;
 		} else {
-	 	$state = CUSTOMREPORT_RUN;
+	 		$state = CUSTOMREPORT_RUN;
 		}
 	} else {
 		$state = CUSTOMREPORT_RUN;
