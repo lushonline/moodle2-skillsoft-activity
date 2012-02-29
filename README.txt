@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
-Updated: September 2011
-Module Version: 2011092000
+Updated: February 2012
+Module Version: 2012022900
 ================================================================
 
 Moodle Compatibility
@@ -11,6 +11,7 @@ This plugin will work with Moodle 2.0. It is developed as a Moodle plugin activi
 It has been tested with:
 2.0.3 (Build: 20110505)
 2.1.1+ (Build: 20110803)
+2.2.1+ (Build: 20120223)
 
 Known Issues/Limitations
 ------------------------
@@ -24,6 +25,11 @@ http://code.google.com/p/moodle-skillsoft-activity/downloads/list
 
 After updating the module and allowing Moodle to apply the module changes, you
 can safely follow the normal process for updating to Moodle 2.x
+
+Upgrading from Moodle 2.x to 2.2.x
+----------------------------------
+It is neccesary to first upgrade the existing SkillSoft module to 20120229xx
+http://code.google.com/p/moodle2-skillsoft-activity/downloads/list
 
 PHP Requirement in additional to Moodle 2.x
 -------------------------------------------
