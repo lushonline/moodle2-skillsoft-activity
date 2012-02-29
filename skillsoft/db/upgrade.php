@@ -100,8 +100,21 @@ function xmldb_skillsoft_upgrade($oldversion) {
 	    	$result = true;
     }
 
-    if ($result && $oldversion < 2011121400) {
-	    	upgrade_mod_savepoint(true, 2011121400, 'skillsoft');
+	if ($result && $oldversion < 2012022900) {
+			// Drop the index on the skillsoft_report_results table as it may
+			// prvent upgrades to Moodle 2.2 which introduces restrictive checks
+			// on indexes see http://tracker.moodle.org/browse/MDL-29314
+			 
+			// Define index loginname-assetid-firstaccessdate (unique) to be dropped form skillsoft_report_results
+	        $table = new xmldb_table('skillsoft_report_results');
+	        $index = new xmldb_index('loginname-assetid-firstaccessdate', XMLDB_INDEX_UNIQUE, array('loginname', 'assetid', 'firstaccessdate'));
+	
+	        // Conditionally launch drop index loginname-assetid-firstaccessdate
+	        if ($dbman->index_exists($table, $index)) {
+	            $dbman->drop_index($table, $index);
+	        }
+		
+	    	upgrade_mod_savepoint(true, 2012022900, 'skillsoft');
 	    	$result = true;
     }
 
