@@ -95,4 +95,8 @@ $settings->add(new admin_setting_configcheckbox('skillsoft_reportincludetoday',
 			   get_string('skillsoft_reportincludetodaydesc', 'skillsoft'),
 			   0));			   
 			   
+$settings->add(new admin_setting_configcheckbox('skillsoft_clearwsdlcache',
+		   get_string('skillsoft_clearwsdlcache', 'skillsoft'),
+		   get_string('skillsoft_clearwsdlcachedesc', 'skillsoft'),
+		   0));			   
 ?>
