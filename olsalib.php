@@ -113,9 +113,10 @@ class olsa_soapclient extends SoapClient{
 	 * @param string $filename - Filename to save to
 	 * @param string $cachefolder - Folder to store downloads
  	 * @param int $cachetime - How long the saved file is valid for in seconds
+ 	 * @param bool $forcedownload - Force the files to be downloaded
 	 * @return object
 	 */
-	private function downloadfile($url, $filename , $cachefolder='temp/wsdl' , $cachetime=86400) {
+	private function downloadfile($url, $filename , $forcedownload=false, $cachefolder='temp/wsdl' , $cachetime=86400) {
 		global $CFG;
 
 		$basefolder = str_replace('\\','/', $CFG->dataroot);
@@ -130,7 +131,7 @@ class olsa_soapclient extends SoapClient{
 		$fullpath = $basefolder.'/'.$folder.'/'.$filename;
 
 		//Check if we have a cached copy
-		if(!file_exists($fullpath) || filemtime($fullpath) < time() - $cachetime) {
+		if(!file_exists($fullpath) || filemtime($fullpath) < time() - $cachetime || $forcedownload == true) {
 			//No copy so download
 
 			if (!extension_loaded('curl') or ($ch = curl_init($url)) === false) {
@@ -144,6 +145,10 @@ class olsa_soapclient extends SoapClient{
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
 				curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
 				curl_setopt($ch, CURLOPT_FILE, $fp);
+				
+				//Force SSLv3 to workaround Openssl 1.0.1 issue
+				//See https://bugs.launchpad.net/ubuntu/+source/curl/+bug/595415
+				curl_setopt($ch, CURLOPT_SSLVERSION, 3); 
 
 				//Setup Proxy Connection
 
@@ -186,6 +191,8 @@ class olsa_soapclient extends SoapClient{
 					$downloadresult->filepath = $basefolder.'/'.$folder.'/'.$filename;
 					$downloadresult->error = '';
 					fclose($fp);
+					
+					
 				} else {
 					fclose($fp);
 					$error    = curl_error($ch);
@@ -223,7 +230,7 @@ class olsa_soapclient extends SoapClient{
 	 * @param string $basepath - The basepath of the XML we are processing. This is needed when
 	 *  							schema reference is relative.
 	 */
-	private function processExternalSchema($filepath, $basepath) {
+	private function processExternalSchema($filepath, $basepath, $forcedownload=false) {
 		//This will find any embedded schemas and download them
 		libxml_use_internal_errors(true);
 		$simplexml = simplexml_load_file($filepath);
@@ -250,7 +257,7 @@ class olsa_soapclient extends SoapClient{
 				}
 
 				//Attempt to download the External schame files
-				if ($content = $this->downloadfile($schemaurl,$schemafilename)) {
+				if ($content = $this->downloadfile($schemaurl,$schemafilename, $forcedownload)) {
 					//Check for HTTP 200 response
 					if ($content->status != 200) {
 						//We have an error so throw an exception
@@ -259,7 +266,7 @@ class olsa_soapclient extends SoapClient{
 						//now we update the $xsdnode
 						//Shows how to change it
 						$xsdnode->attributes()->schemaLocation = $content->filename;
-						$this->processExternalSchema($content->filepath, $basepath);
+						$this->processExternalSchema($content->filepath, $basepath, $forcedownload);
 					}
 				}
 			}
@@ -278,16 +285,26 @@ class olsa_soapclient extends SoapClient{
 	private function retrieveWSDL($wsdl) {
 		global $CFG;
 
+		if ($CFG->skillsoft_clearwsdlcache == 1) {
+			$forcedownload = true;
+		} else {
+			$forcedownload = false;
+		}
+		
 		//Attempt to download the WSDL
-		if ($wsdlcontent = $this->downloadfile($wsdl,'olsa.wsdl')) {
+		if ($wsdlcontent = $this->downloadfile($wsdl,'olsa.wsdl',$forcedownload)) {
 			//Check for HTTP 200 response
 			if ($wsdlcontent->status != 200) {
 				//We have an error so throw an exception
 				throw new Exception($wsdlcontent->error);
 			}
 			else {
-				$this->processExternalSchema($wsdlcontent->filepath, $CFG->skillsoft_olsaendpoint.'/../');
+				$this->processExternalSchema($wsdlcontent->filepath, $CFG->skillsoft_olsaendpoint.'/../', $forcedownload);
 			}
+		}
+		//If we forced a redownload clear the setting
+		if ($CFG->skillsoft_clearwsdlcache == 1) {
+			set_config('skillsoft_clearwsdlcache', 0);
 		}
 		return $wsdlcontent->filepath;
 	}
@@ -327,6 +344,10 @@ class olsa_soapclient extends SoapClient{
 						curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
 						curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
+						//Force SSLv3 to workaround Openssl 1.0.1 issue
+						//See https://bugs.launchpad.net/ubuntu/+source/curl/+bug/595415
+						curl_setopt($ch, CURLOPT_SSLVERSION, 3); 
+						
 						if (!empty($CFG->proxyhost)) {
 							// SOCKS supported in PHP5 only
 							if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
