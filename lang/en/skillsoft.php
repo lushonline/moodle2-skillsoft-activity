@@ -42,7 +42,7 @@ $string['modulename_help'] = '<p>This module provides a way to simply create a n
 <p>It is made up of two components:</p> 
 <ul>
 <li>LMS Interface - This provides a means for Moodle to launch SkillSoft assets using the industry standard AICC HACP method.</li>
-<li>Web Services - This provides a means for another system to interact with SkillPort using standards based Web Services. These provide the functionality in this module to support retrieving of course metadata and synchronising progress between the systems</li>
+<li>Web Services - This provides a means for another system to interact with Skillport using standards based Web Services. These provide the functionality in this module to support retrieving of course metadata and synchronising progress between the systems</li>
 </ul>
 <p>OLSA Supports two tracking modes, which determines where the users progress data is stored</p>
 <ul>
@@ -94,16 +94,16 @@ $string['skillsoft_ssourldesc'] = 'Enter the URL for the single signon use %s to
 
 $string['skillsoft_sso_actiontype'] = 'Select the OLSA Action Type';
 $string['skillsoft_sso_actiontypedesc'] = 'Select the actiontype for launching assets using SSO mode';
-$string['skillsoft_sso_actiontype_launch'] = 'Launch Asset without showing SkillPort UI (launch)';
-$string['skillsoft_sso_actiontype_summary'] = 'Launch Asset Summary Page in SkillPort UI (summary)';
+$string['skillsoft_sso_actiontype_launch'] = 'Launch Asset without showing Skillport UI (launch)';
+$string['skillsoft_sso_actiontype_summary'] = 'Launch Asset Summary Page in Skillport UI (summary)';
 
 $string['skillsoft_defaultssogroup'] = 'SkillSoft Default Group List';
-$string['skillsoft_defaultssogroupdesc'] = 'A comma seperated list of the default groups to send for new users during SSO to SkillPort. Existing users group membership in SkillPort is not altered.';
+$string['skillsoft_defaultssogroupdesc'] = 'A comma seperated list of the default groups to send for new users during SSO to Skillport. Existing users group membership in Skillport is not altered.';
 
 $string['skillsoft_settingsmissing'] = 'Can not retrieve SkillSoft OLSA Settings: please check the configuration settings.';
 
 $string['skillsoft_accountprefix'] = 'Account Prefix';
-$string['skillsoft_accountprefixdesc'] = 'Enter a prefix which will be added in front of the username sent to SkillPort.';
+$string['skillsoft_accountprefixdesc'] = 'Enter a prefix which will be added in front of the username sent to Skillport.';
 
 $string['skillsoft_reportstartdate'] = 'Custom Report Start Date';
 $string['skillsoft_reportstartdatedesc'] = 'Enter the start date for the custom report to retrieve data. This field is automatically updated every time the report successfully runs.';
@@ -111,6 +111,8 @@ $string['skillsoft_reportstartdatedesc'] = 'Enter the start date for the custom 
 $string['skillsoft_reportincludetoday'] = 'Custom Report Include Todays Data';
 $string['skillsoft_reportincludetodaydesc'] = 'The report defaults to including data upto and including the previous day, this override makes the report include todays data.';
 
+$string['skillsoft_clearwsdlcache'] = 'Clear the cached WSDL files';
+$string['skillsoft_clearwsdlcachedesc'] = 'The WSDL files are downloaded and cached to improve SOAP client startup time, if selected this will force them to be downloaded again and recached.';
 
 $string['skillsoft_usesso'] = 'Use OLSA SSO';
 $string['skillsoft_usessodesc'] = 'Use the OLSA Web Services SSO function, this requires one of the Track to OLSA modes. If unchecked all launches uses the AICC launch process';
@@ -141,7 +143,7 @@ $string['skillsoft_assetid_help'] = '<p>This is the SkillSoft unique id that is 
 <p>There are a number of asset ids not listed in the reports above that perform specific functions:</p>
 <ul>
 <li><p>SSO</p>
-<p>This id if the site is in &quot;Track to OLSA&quot; mode enables a seamless login from Moodle to the SkillPort Platform</p>
+<p>This id if the site is in &quot;Track to OLSA&quot; mode enables a seamless login from Moodle to the Skillport Platform</p>
 </li>
 <li><p>_addon_books_001</p>
 <p>This id if Books24x7 is available will log the user into the Books24x7 home page. This can be used as well as the direct links to individual Books</p>
@@ -149,7 +151,7 @@ $string['skillsoft_assetid_help'] = '<p>This is the SkillSoft unique id that is 
 </ul>';
 
 $string['skillsoft_retrievemetadata'] = 'Retrieve Metadata';
-$string['skillsoft_retrievemetadata_help'] = '<p>When you click this button the SkillSoft OLSA server you are using will be queried, for details on the Asset you specify.</p>
+$string['skillsoft_retrievemetadata_help'] = '<p>When you click this button the Skillsoft OLSA server you are using will be queried, for details on the Asset you specify.</p>
 <p>The query will update the Activity with this information if available:</p>
 <ul>
     <li>Course Description/Overview</li>
@@ -158,7 +160,7 @@ $string['skillsoft_retrievemetadata_help'] = '<p>When you click this button the 
     <li>Expected Duration</li>
 </ul>';
 $string['skillsoft_updatemetadata'] = 'Update Metadata';
-$string['skillsoft_updatemetadata_help'] = '<p>When you click this button the SkillSoft OLSA server you are using will be queried, for details on the Asset you specify.</p>
+$string['skillsoft_updatemetadata_help'] = '<p>When you click this button the Skillsoft OLSA server you are using will be queried, for details on the Asset you specify.</p>
 <p>The query will update the Activity with this information if available:</p>
 <ul>
     <li>Course Description/Overview</li>
@@ -167,22 +169,22 @@ $string['skillsoft_updatemetadata_help'] = '<p>When you click this button the Sk
     <li>Expected Duration</li>
 </ul>';
 $string['skillsoft_name'] = 'Title';
-$string['skillsoft_name_help'] = '<p>Enter the Title for the SkillSoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
+$string['skillsoft_name_help'] = '<p>Enter the Title for the Skillsoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_summary'] = 'Overview/Description';
-$string['skillsoft_summary_help'] = '<p>Enter the Title for the SkillSoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
+$string['skillsoft_summary_help'] = '<p>Enter the Title for the Skillsoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_audience'] = 'Target Audience';
-$string['skillsoft_audience_help'] = '<p>Enter the Target Audience for the SkillSoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
+$string['skillsoft_audience_help'] = '<p>Enter the Target Audience for the Skillsoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_prereq'] = 'Prerequisites';
-$string['skillsoft_prereq_help'] = '<p>Enter the Prerequisites for the SkillSoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
+$string['skillsoft_prereq_help'] = '<p>Enter the Prerequisites for the Skillsoft Asset, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_launch'] = 'Launch URL';
-$string['skillsoft_launch_help'] = '<p>Enter the the fully qualified URL to the SkillSoft Asset or use the "Retrieve Metadata" button to automatically complete this information from the SkillSoft "OLSA" server.</p>
-<p>Once you have saved the SkillSoft Asset it is not possible to edit this value or the value of the "Asset ID"</p>';
+$string['skillsoft_launch_help'] = '<p>Enter the the fully qualified URL to the Skillsoft Asset or use the "Retrieve Metadata" button to automatically complete this information from the Skillsoft "OLSA" server.</p>
+<p>Once you have saved the Skillsoft Asset it is not possible to edit this value or the value of the "Asset ID"</p>';
 $string['skillsoft_mastery'] = 'Mastery Score';
-$string['skillsoft_mastery_help'] = '<p>When using &quot;Track to LMS&quot; mode, this value is sent to the SkillSoft course on launch and controls when the course will return a lesson status of completed.</p>
-<p>If &quot;No Mastery Score&quot; is selected the course will rely on the value configured in SkillSoft OLSA</p>
-<p>When using &quot;Track to OLSA&quot; mode, this value is ignored, the judging of completion is performed by the SkillSoft OLSA server</p>';
+$string['skillsoft_mastery_help'] = '<p>When using &quot;Track to LMS&quot; mode, this value is sent to the Skillsoft course on launch and controls when the course will return a lesson status of completed.</p>
+<p>If &quot;No Mastery Score&quot; is selected the course will rely on the value configured in Skillsoft OLSA</p>
+<p>When using &quot;Track to OLSA&quot; mode, this value is ignored, the judging of completion is performed by the Skillsoft OLSA server</p>';
 $string['skillsoft_duration'] = 'Duration (minutes)';
-$string['skillsoft_duration_help'] = '<p>Enter the duration for the SkillSoft Asset, in minutes, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
+$string['skillsoft_duration_help'] = '<p>Enter the duration for the Skillsoft Asset, in minutes, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_assettype'] = 'Asset Type';
 
 //view.php
@@ -221,7 +223,7 @@ $string['skillsoft_bestscore'] = "Best Score";
 $string['skillsoft_accesscount'] = "Access Count";
 
 $string['skillsoft_noncompletable'] = 'Non Completable Asset';
-$string['skillsoft_noncompletable_help'] = '<p>Certain assets that SkillSoft OLSA makes available to load do not provide any scoring or completion status.</p>
+$string['skillsoft_noncompletable_help'] = '<p>Certain assets that Skillsoft OLSA makes available to load do not provide any scoring or completion status.</p>
 <p>The following are some of those asset types:</p>
 <ul>
 <li>Books24x7 Books</li>
@@ -241,21 +243,21 @@ $string['skillsoft_report'] = 'Report';
 
 //cron.php
 $string['skillsoft_purgemessage'] = 'Purging skillsoft session ids from database created before {$a}';
-$string['skillsoft_odcinit'] = 'Initialising SkillSoft On-Demand Communications Cycle';
+$string['skillsoft_odcinit'] = 'Initialising Skillsoft On-Demand Communications Cycle';
 $string['skillsoft_odciniterror'] = 'Error Recieved while initialising On-Demand Communications. Error={$a}';
-$string['skillsoft_odcgetdatastart'] = 'Start Retrieving SkillSoft TDRs for handle={$a}';
-$string['skillsoft_odcgetdataend'] = 'End Retrieving SkillSoft TDRs for handle={$a}';
+$string['skillsoft_odcgetdatastart'] = 'Start Retrieving Skillsoft TDRs for handle={$a}';
+$string['skillsoft_odcgetdataend'] = 'End Retrieving Skillsoft TDRs for handle={$a}';
 $string['skillsoft_odcgetdataerror'] = 'Error while retrieving TDRs. Error={$a}';
 $string['skillsoft_odcgetdataprocess'] = 'Processing TDR. ID={$a}';
 $string['skillsoft_odcnoresultsavailable'] = 'No Results Available';
 $string['skillsoft_odcackdata'] = 'Acknowledging handle={$a}';
 $string['skillsoft_odcackdataerror'] = 'Error while acknowledging handle. Error={$a}';
 $string['skillsoft_odcprocessinginit'] = 'Start Processing retrieved TDRs';
-$string['skillsoft_odcprocessretrievedtdr'] = 'Processing TDR. ID={$a->tdrid}   SkillSoftID={$a->skillsoftid}   UserID={$a->userid}';
+$string['skillsoft_odcprocessretrievedtdr'] = 'Processing TDR. ID={$a->tdrid}   SkillsoftID={$a->skillsoftid}   UserID={$a->userid}';
 $string['skillsoft_odcprocessingend'] = 'End Processing retrieved TDRs';
 
-$string['skillsoft_customreport_init'] = 'Initialising SkillSoft Custom Report Cycle';
-$string['skillsoft_customreport_end'] = 'End SkillSoft Custom Report Cycle';
+$string['skillsoft_customreport_init'] = 'Initialising Skillsoft Custom Report Cycle';
+$string['skillsoft_customreport_end'] = 'End Skillsoft Custom Report Cycle';
 
 $string['skillsoft_customreport_run_start'] = 'Start Submit Custom Report';
 $string['skillsoft_customreport_run_initerror'] = 'Error Received while initialising Custom Report Download Cycle. Error={$a}';
@@ -291,7 +293,7 @@ $string['skillsoft_customreport_import_end'] = 'End Importing Downloaded Report'
 $string['skillsoft_customreport_process_start'] = 'Start Processing retrieved Report Results';
 $string['skillsoft_customreport_process_totalrecords'] = 'Total records to process = {$a}';
 $string['skillsoft_customreport_process_batch'] = 'Processing batch of records. Start Record Position = {$a}';
-$string['skillsoft_customreport_process_retrievedresults'] = 'Processing Report Results. ID={$a->id}   SkillSoftID={$a->skillsoftid}   UserID={$a->userid}';
+$string['skillsoft_customreport_process_retrievedresults'] = 'Processing Report Results. ID={$a->id}   SkillsoftID={$a->skillsoftid}   UserID={$a->userid}';
 $string['skillsoft_customreport_process_end'] = 'End Processing retrieved Report Results';
 
 
@@ -302,18 +304,18 @@ $string['skillsoft_summarymessage'] = 'Attempt: {$a->attempt}<br/>Access Count: 
 $string['skillsoft_trackedelement'] = 'AICC Datamodel Elements';
 
 //ssopreloader.php
-$string['skillsoft_ssotitle'] = 'Logging in to SkillPort';
-$string['skillsoft_ssoloading'] = 'Please wait while we log you into SkillPort';
+$string['skillsoft_ssotitle'] = 'Logging in to Skillport';
+$string['skillsoft_ssoloading'] = 'Please wait while we log you into Skillport';
 $string['skillsoft_ssoerror'] = 'An error has occurred while trying to perform Skillport login. Details:';
-$string['skillsoft_ssomodeerror'] = 'SkillPort seamless login is only available in Track to OLSA mode.';
+$string['skillsoft_ssomodeerror'] = 'Skillport seamless login is only available in Track to OLSA mode.';
 
 $string['skillsoft_ssopopupopened'] = 'This window will automatically close in 5 seconds.<br/>';
 $string['skillsoft_ssopopupdetected'] = 'A popup blocker prevented the completion of this launch.<br/>Please disable your popup blocker and try again.<br/>';
 
 
 //getolsadata.php - SSO
-$string['skillsoft_ssoassettitle'] = 'Login to SkillPort';
-$string['skillsoft_ssoassetsummary'] = 'Login to SkillPort seamlessly';
+$string['skillsoft_ssoassettitle'] = 'Login to Skillport';
+$string['skillsoft_ssoassetsummary'] = 'Login to Skillport seamlessly';
 
 //Attempts
 $string['skillsoft_attempt'] = 'Attempt';
