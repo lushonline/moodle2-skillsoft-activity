@@ -693,13 +693,13 @@ function skillsoft_customreport($includetoday=false) {
 		if ($report->polled == 0) {
 			$state= CUSTOMREPORT_POLL;
 		} else if ($report->downloaded == 0) {
-	 	$state= CUSTOMREPORT_DOWNLOAD;
+	 		$state= CUSTOMREPORT_DOWNLOAD;
 		} else if ($report->imported == 0) {
-	 	$state= CUSTOMREPORT_IMPORT;
+	 		$state= CUSTOMREPORT_IMPORT;
 		} else if ($report->processed == 0) {
-	 	$state= CUSTOMREPORT_PROCESS;
+	 		$state= CUSTOMREPORT_PROCESS;
 		} else {
-	 	$state = CUSTOMREPORT_RUN;
+	 		$state = CUSTOMREPORT_RUN;
 		}
 	} else {
 		$state = CUSTOMREPORT_RUN;
