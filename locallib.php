@@ -160,7 +160,14 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 	if (!$CFG->skillsoft_usesso && strtolower($skillsoft->assetid) != 'sso') {
 		//skillsoft_ssourl is not defined so do AICC
 		$newkey = skillsoft_create_sessionid($user->id, $skillsoft->id);
-		$launcher = $skillsoft->launch.$connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
+		
+		$launcher = $skillsoft->launch;
+		//Section 508 Enhancement - add x508 value of $user->screenreader
+		if ($user->screenreader == 1) {
+			$launcher .= $connector.'x508=1';
+		}
+		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
+		
 		$options = "'width=800,height=600'";
 
 
@@ -1064,6 +1071,10 @@ function skillsoft_download_customreport($handle, $url, $folder=NULL, $trace=fal
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
 		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FILE, $fp);
+		
+		//Force SSLv3 to workaround Openssl 1.0.1 issue
+		//See https://bugs.launchpad.net/ubuntu/+source/curl/+bug/595415
+		curl_setopt($ch, CURLOPT_SSLVERSION, 3); 
 
 		//Setup Proxy Connection
 
