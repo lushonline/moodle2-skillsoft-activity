@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<XMLDB PATH="mod/skillsoft/db" VERSION="2012022900" COMMENT="XMLDB file for Moodle mod/skillsoft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="mod/skillsoft/db" VERSION="2012081000" COMMENT="XMLDB file for Moodle mod/skillsoft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="skillsoft" COMMENT="each table is one skillsoft asset and its configuration" NEXT="skillsoft_au_track">
       <FIELDS>
