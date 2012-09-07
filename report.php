@@ -84,7 +84,7 @@ if ($user) {
 		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$id,'user'=>'true')));
 	} else {
 		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$id,'user'=>'true')));
-		$PAGE->navbar->add($strattempt.' '.$attempt, '');
+		$PAGE->navbar->add($strattempt.' '.$attempt);
 	}
 }
 echo $OUTPUT->header();
