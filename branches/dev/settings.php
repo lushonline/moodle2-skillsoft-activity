@@ -98,5 +98,16 @@ $settings->add(new admin_setting_configcheckbox('skillsoft_reportincludetoday',
 $settings->add(new admin_setting_configcheckbox('skillsoft_clearwsdlcache',
 		   get_string('skillsoft_clearwsdlcache', 'skillsoft'),
 		   get_string('skillsoft_clearwsdlcachedesc', 'skillsoft'),
-		   0));			   
+		   0));
+
+$settings->add(new admin_setting_configcheckbox('skillsoft_disableusagedatacrontask',
+		get_string('skillsoft_disableusagedatacrontask', 'skillsoft'),
+		get_string('skillsoft_disableusagedatacrontaskdesc', 'skillsoft'),
+		0));
+
+$settings->add(new admin_setting_configcheckbox('skillsoft_resetcustomreportcrontask',
+		get_string('skillsoft_resetcustomreportcrontask', 'skillsoft'),
+		get_string('skillsoft_resetcustomreportcrontaskdesc', 'skillsoft'),
+		0));
+
 ?>
