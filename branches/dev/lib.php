@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param object $skillsoft An object from the form in mod_form.php
  * @return bool true if the item is completable
- */
+*/
 function skillsoft_iscompletable($skillsoft) {
 	if (strcasecmp(substr($skillsoft->assetid, 0, 9),"_scorm12_")===0) {
 		//SCORM content hosted on SkillPort will not have hacp=0 in the
@@ -173,9 +173,9 @@ function skillsoft_get_user_grades($skillsoft, $userid=0) {
 	if ($skillsoft->completable == true) {
 		if (empty($userid)) {
 			if ($auusers = $DB->get_records_select('skillsoft_au_track',
-													'skillsoftid=?',
-													array($skillsoft->id),
-													'userid,skillsoftid'))
+					'skillsoftid=?',
+					array($skillsoft->id),
+					'userid,skillsoftid'))
 			{
 				foreach ($auusers as $auuser) {
 					$rawgradeinfo =  skillsoft_grade_user($skillsoft, $auuser->userid);
@@ -192,9 +192,9 @@ function skillsoft_get_user_grades($skillsoft, $userid=0) {
 
 		} else {
 			if (!$DB->get_records_select('skillsoft_au_track',
-										 'skillsoftid=? AND userid=?',
-										 array($skillsoft->id, $userid),
-									     'userid,skillsoftid'))
+					'skillsoftid=? AND userid=?',
+					array($skillsoft->id, $userid),
+					'userid,skillsoftid'))
 			{
 				return false; //no attempt yet
 			}
@@ -238,8 +238,8 @@ function skillsoft_update_grades($skillsoft=null, $userid=0, $nullifnone=true) {
 		}
 	} else {
 		$sql = "SELECT s.*, cm.idnumber as cmidnumber
-                  FROM {skillsoft} s, {course_modules} cm, {modules} m
-                 WHERE m.name='skillsoft' AND m.id=cm.module AND cm.instance=s.id";
+				FROM {skillsoft} s, {course_modules} cm, {modules} m
+				WHERE m.name='skillsoft' AND m.id=cm.module AND cm.instance=s.id";
 		$rs = $DB->get_recordset_sql($sql);
 		if ($rs->valid()) {
 			foreach ($rs as $skillsoft) {
@@ -371,16 +371,16 @@ function skillsoft_user_complete($course, $user, $mod, $skillsoft) {
 
 	$table = new html_table();
 	$table->head = array(
-	get_string('skillsoft_attempt', 'skillsoft'),
-	get_string('skillsoft_firstaccess','skillsoft'),
-	get_string('skillsoft_lastaccess','skillsoft'),
-	get_string('skillsoft_completed','skillsoft'),
-	get_string('skillsoft_lessonstatus','skillsoft'),
-	get_string('skillsoft_totaltime','skillsoft'),
-	get_string('skillsoft_firstscore','skillsoft'),
-	get_string('skillsoft_currentscore','skillsoft'),
-	get_string('skillsoft_bestscore','skillsoft'),
-	get_string('skillsoft_accesscount','skillsoft'),
+			get_string('skillsoft_attempt', 'skillsoft'),
+			get_string('skillsoft_firstaccess','skillsoft'),
+			get_string('skillsoft_lastaccess','skillsoft'),
+			get_string('skillsoft_completed','skillsoft'),
+			get_string('skillsoft_lessonstatus','skillsoft'),
+			get_string('skillsoft_totaltime','skillsoft'),
+			get_string('skillsoft_firstscore','skillsoft'),
+			get_string('skillsoft_currentscore','skillsoft'),
+			get_string('skillsoft_bestscore','skillsoft'),
+			get_string('skillsoft_accesscount','skillsoft'),
 	);
 	$table->align = array('left','left', 'left', 'left', 'center','center','right','right','right','right');
 	$table->wrap = array('','', '','','nowrap','nowrap','nowrap','nowrap','nowrap','nowrap');
@@ -440,13 +440,13 @@ function skillsoft_print_recent_activity($course, $isteacher, $timestart) {
 	//m.value in database is string so need to convert to int for > comparison
 	//to work in MSSQL and MYSQL
 	$sql=	"SELECT	s.id,
-       				s.name,
-       				Count(s.id) AS countlaunches
+			s.name,
+			Count(s.id) AS countlaunches
 			FROM {skillsoft} s
 			LEFT JOIN {skillsoft_au_track} m ON s.id = m.skillsoftid
 			WHERE 	s.course=?
-			 		AND m.element='[SUMMARY]lastaccess'
-			 		AND CAST(CAST(m.value AS CHAR(10)) AS DECIMAL(10,0)) > ?
+			AND m.element='[SUMMARY]lastaccess'
+			AND CAST(CAST(m.value AS CHAR(10)) AS DECIMAL(10,0)) > ?
 			GROUP BY s.id, s.name";
 
 	$params = array($course->id,$timestart);
@@ -500,63 +500,63 @@ function skillsoft_get_recent_mod_activity(&$activities, &$index, $timestart, $c
 	}
 
 	$sql = "SELECT
-	  a.*,
-	  s.name,
-	  s.course,
-	  cm.instance,
-	  cm.section,
-	  u.firstname,
-	  u.lastname,
-	  u.email,
-	  u.picture,
-	  u.imagealt
+	a.*,
+	s.name,
+	s.course,
+	cm.instance,
+	cm.section,
+	u.firstname,
+	u.lastname,
+	u.email,
+	u.picture,
+	u.imagealt
 	FROM {skillsoft_au_track} AS a
 	LEFT JOIN {user} AS u ON a.userid = u.id
 	LEFT JOIN {skillsoft} AS s ON a.skillsoftid = s.id
 	LEFT JOIN {course_modules} AS cm ON a.skillsoftid = cm.instance
 	WHERE
-	  CAST(CAST(a.value AS CHAR(10)) AS DECIMAL(10,0)) > ?
-	  AND a.element = '[SUMMARY]lastaccess'
-	  AND cm.id = ?
-	  $userselect
+	CAST(CAST(a.value AS CHAR(10)) AS DECIMAL(10,0)) > ?
+	AND a.element = '[SUMMARY]lastaccess'
+	AND cm.id = ?
+	$userselect
 	ORDER BY
-	  a.skillsoftid DESC, a.timemodified ASC";
+	a.skillsoftid DESC, a.timemodified ASC";
 
-	  //$params = array($timestart, $courseid);
-	  $records = $DB->get_records_sql($sql,$params);
+	//$params = array($timestart, $courseid);
+	$records = $DB->get_records_sql($sql,$params);
 
-	  if (!empty($records)) {
-	  	foreach ($records as $record) {
-	  		if (empty($groupid) || groups_is_member($groupid, $record->userid)) {
+	if (!empty($records)) {
+		foreach ($records as $record) {
+			if (empty($groupid) || groups_is_member($groupid, $record->userid)) {
 
-	  			unset($activity);
+				unset($activity);
 
 
-	  			$activity->type = "skillsoft";
-	  			$activity->cmid = $cm->id;
-	  			$activity->name = $record->name;
-	  			$activity->sectionnum = $cm->sectionnum;
-	  			$activity->timestamp = $record->timemodified;
+				$activity->type = "skillsoft";
+				$activity->cmid = $cm->id;
+				$activity->name = $record->name;
+				$activity->sectionnum = $cm->sectionnum;
+				$activity->timestamp = $record->timemodified;
 
-	  			$activity->content = new stdClass();
-	  			$activity->content->instance = $record->instance;
-	  			$activity->content->attempt = $record->attempt;
-	  			$activity->content->lastaccessdate = $record->value;
+				$activity->content = new stdClass();
+				$activity->content->instance = $record->instance;
+				$activity->content->attempt = $record->attempt;
+				$activity->content->lastaccessdate = $record->value;
 
-	  			$activity->user = new stdClass();
-	  			$activity->user->id = $record->userid;
-	  			$activity->user->firstname = $record->firstname;
-	  			$activity->user->lastname  = $record->lastname;
-	  			$activity->user->picture   = $record->picture;
-	  			$activity->user->imagealt = $record->imagealt;
-	  			$activity->user->email = $record->email;
+				$activity->user = new stdClass();
+				$activity->user->id = $record->userid;
+				$activity->user->firstname = $record->firstname;
+				$activity->user->lastname  = $record->lastname;
+				$activity->user->picture   = $record->picture;
+				$activity->user->imagealt = $record->imagealt;
+				$activity->user->email = $record->email;
 
-	  			$activities[] = $activity;
+				$activities[] = $activity;
 
-	  			$index++;
-	  		}
-	  	} // end foreach
-	  }
+				$index++;
+			}
+		} // end foreach
+	}
 }
 
 function skillsoft_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
@@ -574,7 +574,7 @@ function skillsoft_print_recent_mod_activity($activity, $courseid, $detail, $mod
 	if ($detail) {
 		$aname = s($activity->name);
 		echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" ".
-             "class=\"icon\" alt=\"{$aname}\" />";
+				"class=\"icon\" alt=\"{$aname}\" />";
 	}
 	// link to activity
 	//$skillsofthref = new moodle_url('/mod/skillsoft/report.php', array('id'=>$activity->content->instance,'user'=>'true','attempt'=>$activity->content->attempt));;
@@ -690,16 +690,26 @@ function skillsoft_customreport($includetoday=false) {
 	//We have a report row now we have to decide what to do:
 	if ($reports) {
 		$report = end($reports);
-		if ($report->polled == 0) {
-			$state= CUSTOMREPORT_POLL;
-		} else if ($report->downloaded == 0) {
-	 		$state= CUSTOMREPORT_DOWNLOAD;
-		} else if ($report->imported == 0) {
-	 		$state= CUSTOMREPORT_IMPORT;
-		} else if ($report->processed == 0) {
-	 		$state= CUSTOMREPORT_PROCESS;
+
+		//If we need to reset the cycle - skillsoft_resetcustomreportcrontask = true
+		//Then delete this last $report and set $state = CUSTOMREPORT_RUN
+		if ($CFG->skillsoft_resetcustomreportcrontask) {
+			skillsoft_delete_customreport($report->handle);
+			//Now we need to reset to 0
+			set_config('skillsoft_resetcustomreportcrontask', 0);
+			$state = CUSTOMREPORT_RUN;
 		} else {
+			if ($report->polled == 0) {
+				$state= CUSTOMREPORT_POLL;
+			} else if ($report->downloaded == 0) {
+	 		$state= CUSTOMREPORT_DOWNLOAD;
+			} else if ($report->imported == 0) {
+	 		$state= CUSTOMREPORT_IMPORT;
+			} else if ($report->processed == 0) {
+	 		$state= CUSTOMREPORT_PROCESS;
+			} else {
 	 		$state = CUSTOMREPORT_RUN;
+			}
 		}
 	} else {
 		$state = CUSTOMREPORT_RUN;
@@ -763,16 +773,18 @@ function skillsoft_cron () {
 	mtrace(get_string('skillsoft_purgemessage','skillsoft',userdate($purgetime)));
 	skillsoft_delete_sessions($purgetime);
 
-	if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA) {
-		//We are in "Track to OLSA" so perform ODC cycle
-		skillsoft_ondemandcommunications();
-	}
+	if (!$CFG->skillsoft_disableusagedatacrontask) {
+		if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA) {
+			//We are in "Track to OLSA" so perform ODC cycle
+			skillsoft_ondemandcommunications();
+		}
 
-	if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA_CUSTOMREPORT) {
-		//We are in "Track to OLSA (Custom Report)" so perform custom report cycle
-		//This is where we generate custom report for last 24 hours (or catchup), download it and then import it
-		//assumption is LoginName will be the value we selected here for $CFG->skillsoft_useridentifier
-		skillsoft_customreport($CFG->skillsoft_reportincludetoday);
+		if ($CFG->skillsoft_trackingmode == TRACK_TO_OLSA_CUSTOMREPORT) {
+			//We are in "Track to OLSA (Custom Report)" so perform custom report cycle
+			//This is where we generate custom report for last 24 hours (or catchup), download it and then import it
+			//assumption is LoginName will be the value we selected here for $CFG->skillsoft_useridentifier
+			skillsoft_customreport($CFG->skillsoft_reportincludetoday);
+		}
 	}
 	return true;
 }
@@ -791,10 +803,10 @@ function skillsoft_get_participants($skillsoftid) {
 
 	//Get students
 	$sql = "SELECT DISTINCT u.id, u.id
-                                 FROM {user} u,
-                                 {lesson_au_tracks} a
-                                 WHERE a.skillsoftid = '?' and
-                                       u.id = a.userid";
+			FROM {user} u,
+			{lesson_au_tracks} a
+			WHERE a.skillsoftid = '?' and
+			u.id = a.userid";
 	$params = array($skillsofid);
 
 	$students = $DB->get_records_sql($sql,$params);
@@ -853,11 +865,11 @@ function skillsoft_scale_used_anywhere($scaleid) {
 	$return = false;
 	/*
 	 if ($scaleid and record_exists('skillsoft', 'grade', -$scaleid)) {
-	 return true;
-	 } else {
-	 return false;
-	 }
-	 */
+	return true;
+	} else {
+	return false;
+	}
+	*/
 	return $return;
 }
 
