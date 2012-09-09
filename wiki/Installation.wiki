@@ -1,4 +1,5 @@
 #summary Installation Process
+#labels Phase-Deploy
 <wiki:toc max_depth="1" />
 = Introduction =
 This Module is only supported on Moodle 2.x series, for a version for Moodle 1.9.x visit:
