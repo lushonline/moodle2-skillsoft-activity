@@ -1,0 +1,20 @@
+#summary Overview of Basic OLSA Diagnostics Page
+#labels Phase-Deploy
+<wiki:toc max_depth="1" />
+= Introduction =
+A simple diagnostics page is included that allows an administrator to confirm if the OLSA settings work
+
+The page /mod/skillsoft/olsadiag.php
+
+Will perform the following simple tests:
+
+  # Checking SOAP Extension is loaded
+  # Checking cURL Extension is loaded
+  # Checking OLSA Settings are configured
+  # Is OLSA EndPoint Accessible
+  # Check Time Synchronisation
+  # Create OLSA SOAP Client
+  # Check OLSA Authentication
+
+An example of a "fail" is shown below:
+http://sites.google.com/site/moodleskillsoftactivity/images/OLSADIAGEXAMPLE.PNG
