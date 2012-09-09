@@ -15,6 +15,6 @@
 
 * Technical Info
 
-  * [UseIdenticationDetails How is a users Identification sent to OLSA]
+  * [UserIdenticationDetails How is a users Identification sent to OLSA]
 
-  * [actiontyperesulsts What will my users see when they launch an asset]
+  * [actiontyperesults What will my users see when they launch an asset]
