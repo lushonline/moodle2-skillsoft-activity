@@ -1,20 +1,11 @@
 * [Installation Installation]
-
 * [configuration Configuration]
-
 * Identifying an Assets ID
-
   * [RetrieveBookId Books & Videos]
-
   * [RetrieveCatalogueAssetId Courseware and Catalogue Items]
-
 * [addinganasset Adding an Asset]
-
 * Troubleshooting
   * [olsadiag OLSA Diagnostics Test Page]
-
 *Technical Info
-
   * [UserIdenticationDetails How is a users Identification sent to OLSA]
-
   * [actiontyperesults What will my users see when they launch an asset]
