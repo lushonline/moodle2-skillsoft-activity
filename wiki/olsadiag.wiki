@@ -1,7 +1,7 @@
 #summary Overview of Basic OLSA Diagnostics Page
 #labels Phase-Deploy
 <wiki:toc max_depth="1" />
-= Introduction =
+=Introduction=
 A simple diagnostics page is included that allows an administrator to confirm if the OLSA settings work
 
 The page /mod/skillsoft/olsadiag.php

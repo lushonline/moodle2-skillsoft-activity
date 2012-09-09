@@ -1,7 +1,7 @@
 #summary Installation Process
 #labels Phase-Deploy
 <wiki:toc max_depth="1" />
-= Introduction =
+=Introduction=
 This Module is only supported on Moodle 2.x series, for a version for Moodle 1.9.x visit:
 http://code.google.com/p/moodle-skillsoft-activity
 
@@ -13,7 +13,7 @@ Please be sure to read the [http://code.google.com/p/moodle2-skillsoft-activity/
 
 Once installed and configured a simple diagnostics page allows you to test OLSA connectivity see [olsadiag]
 
-= Using the ZIP file =
+=Using the ZIP file=
   # Download the ZIP file
   # Extract all the files, ensuring folders are created, to the MOODLEHOME/mod/. You should end up with a skillsoft folder.
   # Login to Moodle as administrator

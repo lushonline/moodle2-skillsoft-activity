@@ -1,6 +1,6 @@
 #summary Overview of how user data is shared between Moodle and Skillsoft OLSA Server
 <wiki:toc max_depth="1" />
-= Introduction =
+=Introduction=
 When using the module one of the key features is understanding how the OLSA server "knows" who the user is, this is all achieved using the OLSA servers support for AICC.
 
 When a user launches a Skillsoft asset from Moodle, what they are actually doing is performing an "AICC" launch.
@@ -9,7 +9,7 @@ _Note: The module does not uses Moodles AICC code_
 
 OLSA gets the minimum details it needs to create a user by parsing the AICC response from Moodle.
 
-= Specifics =
+=Specifics=
 Here we will look in detail at the data exchange, and we will use the Track to OLSA mode to demonstrate.
 <br>
 [http://sites.google.com/site/moodleskillsoftactivity/images/TrackToOLSA.jpg]
