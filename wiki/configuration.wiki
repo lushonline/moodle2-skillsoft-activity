@@ -94,4 +94,4 @@ When using "Track to OLSA (Custom Report)" there are a number of steps for the p
 
 If the cycle locks, due to perhaps a failed report generation step, the code would hang continually trying to POLL during the next cycle.
 
-This setting allows you to rest the process.
+This setting allows you to rest the process. After the first CRON run resubmits the RUN request after you set this the setting is automatically disabled. 
