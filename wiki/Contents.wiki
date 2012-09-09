@@ -8,7 +8,7 @@
 
   * [RetrieveCatalogueAssetId Courseware and Catalogue Items]
 
-* [addingansset Adding an Asset]
+* [addinganasset Adding an Asset]
 
 * Troubleshooting
   * [olsadiag OLSA Diagnostics Test Page]
