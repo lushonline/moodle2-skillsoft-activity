@@ -2,7 +2,7 @@
 #labels Phase-QA
 <wiki:toc max_depth="2" />
 =Introduction=
-The code is developed using Eclipse PDT on Windows Server 2008 R 2 Web Server Edition Service Pack 1.
+The code is developed using [http://www.zend.com/community/pdt/downloads Eclipse PDT] using [http://www.zend.com/community/pdt/downloads ZEND Debugger] on Windows Server 2008 R 2 Web Server Edition Service Pack 1.
 
 The server is running:
   * PHP 5.3.13
