@@ -37,6 +37,8 @@ The benefit of using the username, is that it makes it easier to use "Track to O
 
 Read [UserIdenticationDetails] to understand how the id is retrieved from Moodle
 
+*IMPORTANT: If the Moodle username is used, the username must also be  valid as an AICC CMIIdentifier value as defined by the AICC guidlines. Which means the only valid characters outside of A-Z (case insensitive) and 0-9, are a dash {{{-}}} (or hyphen) and the underscore {{{_}}} character. This means an email address is invalid as it contains the @ symbol and periods (.)*
+
 ==Skillsoft Default Group List==
 This option configures the default groupcodes used when utilising the new seamless login to Skillport option.
 
