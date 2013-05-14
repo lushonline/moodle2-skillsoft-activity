@@ -101,8 +101,9 @@ If the cycle locks, due to perhaps a failed report generation step, the code wou
 This setting allows you to rest the process. After the first CRON run resubmits the RUN request after you set this the setting is automatically disabled.
 
 ==Enforce Strict AICC student_id format==
-Introduced in version 2013051400
-By default the module implents the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
+v2013051400+
+
+The module implents the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
 
 When using the Moodle Username as the identifier this can cause issues if the Moodle username is for example an email address as the @ symbol and . are not allowed by the AICC 2.2 standard.
 
