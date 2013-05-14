@@ -8,6 +8,8 @@
 
 * [addinganasset Adding an Asset]
 
+* [usagedata Understanding Skillsoft Usage Data]
+
 * Troubleshooting
   * [olsadiag OLSA Diagnostics Test Page]
   * [stuckreport Custom Report Cycle is stuck]
