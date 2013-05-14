@@ -21,7 +21,7 @@
  * 	 *
  * @package   mod-skillsoft
  * @author 	  Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -126,6 +126,11 @@ class core {
 	//AU to CMI
 	private $session_time;
 
+	
+	//MAY-2013 (2013051400)
+	//true we apply the regex to confirm the studentid is AICC 2.2 conformant
+	private $enforcestrictstudentid;
+	
 	private function IsCmiString255($value)
 	{
 		return strlen($value) <= 255;
@@ -141,7 +146,11 @@ class core {
 		if (strlen($value) > 255) {
 			return false;
 		}
-		return preg_match("/^[A-Za-z0-9\-_:]+$/", $value);
+		if ($this->enforcestrictstudentid) {
+				return preg_match("/^[A-Za-z0-9\-_:]+$/", $value);
+		} else {
+			return true;
+		}
 	}
 
 
@@ -257,11 +266,12 @@ class core {
 		$this->lesson_status_exit = NULL;
 	}
 
-	public function __construct()
+	public function __construct($enforcestrictstudentid=0)
 	{
 		$this->setdefaults();
 		$this->score = new score();
 		$this->student_data = new student_data();
+		$this->enforcestrictstudentid=$enforcestrictstudentid;
 	}
 
 	public function __set($var, $value) {
@@ -367,9 +377,9 @@ class core {
 class cmi {
 	public $core;
 
-	public function __construct()
+	public function __construct($enforcestrictstudentid=0)
 	{
-		$this->core = new core();
+		$this->core = new core($enforcestrictstudentid);
 	}
 }
 

@@ -22,7 +22,7 @@
  *
  * @package   mod-skillsoft
  * @author 	  Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -54,7 +54,7 @@ if (!empty($command) && ($skillsoftsession=skillsoft_check_sessionid($sessionid)
 	
 	if ($skillsoft = $DB->get_record('skillsoft',array('id'=>$skillsoftid))) {
 		$user = $DB->get_record('user',array('id'=>$userid));
-		$handler = new aicchandler($user,$skillsoft,$attempt);
+		$handler = new aicchandler($user,$skillsoft,$attempt,$CFG->skillsoft_strictaiccstudentid);
 
 		switch (strtolower($command)) {
 			case 'getparam':
