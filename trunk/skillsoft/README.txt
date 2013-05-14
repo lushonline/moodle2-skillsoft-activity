@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
-Updated: September 2012
-Module Version: 2012090700
+Updated: May 2013
+Module Version: 2013051400
 ================================================================
 
 Moodle Compatibility
@@ -9,14 +9,12 @@ Moodle Compatibility
 This plugin will work with Moodle 2.0. It is developed as a Moodle plugin activity module.
 
 It has been tested with:
-2.0.3 (Build: 20110505)
-2.1.1+ (Build: 20110803)
-2.2.1+ (Build: 20120223)
-2.3.1+ (Build: 20120709)
+2.3.6+ (Build: 20130322)
+2.4.3+ (Build: 20130322)
 
 Known Issues/Limitations
 ------------------------
-* Backup and Restore have not been implemented in this release
+* Backup and Restore have been partially implemented in this release, supporting only the Skillsoft Asset - not any tracking data.
 * Support for Multiple Completions when using "Track to OLSA" is only supported using the "Custom Report" mode.
 
 Upgrading from Moodle 1.9.x
