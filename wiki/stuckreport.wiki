@@ -4,6 +4,6 @@
 =Introduction=
 When using Track To OLSA (Custom Report) mode sometimes the cycle will become stuck.
 
-You can clear a stuck cycle by setting the "Reset the custom report cycle" setting in the configuration.
+You can clear a stuck cycle by setting the "Reset the custom report cycle" setting in the [configuration#Enforce_Strict_AICC_student_id_format configuration]
 
-This will clear the previous "stuck" report and restart the cycle at the beginning by requesting a new report when teh CRON job next runs.
+This will clear the previous "stuck" report and restart the cycle at the beginning by requesting a new report when the CRON job next runs.
