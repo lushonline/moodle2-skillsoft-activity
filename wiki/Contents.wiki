@@ -10,6 +10,7 @@
 
 * Troubleshooting
   * [olsadiag OLSA Diagnostics Test Page]
+  * [stuckreport Custom Report Cycle is stuck]
 
 *Technical Info
   * [UserIdenticationDetails How is a users Identification sent to OLSA]

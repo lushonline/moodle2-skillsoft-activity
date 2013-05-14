@@ -1,0 +1,9 @@
+#summary Overview of Stuck Custom Report Process
+#labels Phase-Deploy
+<wiki:toc max_depth="1" />
+=Introduction=
+When using Track To OLSA (Custom Report) mode sometimes the cycle will become stuck.
+
+You can clear a stuck cycle by setting the "Reset the custom report cycle" setting in the configuration.
+
+This will clear the previous "stuck" report and restart the cycle at the beginning by requesting a new report when teh CRON job next runs.
