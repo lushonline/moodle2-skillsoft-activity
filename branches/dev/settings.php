@@ -109,5 +109,11 @@ $settings->add(new admin_setting_configcheckbox('skillsoft_resetcustomreportcron
 		get_string('skillsoft_resetcustomreportcrontask', 'skillsoft'),
 		get_string('skillsoft_resetcustomreportcrontaskdesc', 'skillsoft'),
 		0));
+		
+//May-2013 (2013041400)
+$settings->add(new admin_setting_configcheckbox('skillsoft_strictaiccstudentid',
+		get_string('skillsoft_strictaiccstudentid', 'skillsoft'),
+		get_string('skillsoft_strictaiccstudentiddesc', 'skillsoft'),
+		1));		
 
 ?>
