@@ -12,6 +12,7 @@
 
 * Troubleshooting
   * [olsadiag OLSA Diagnostics Test Page]
+  * [contendiag Basic Courseware Diagnostics]
   * [stuckreport Custom Report Cycle is stuck]
 
 *Technical Info
