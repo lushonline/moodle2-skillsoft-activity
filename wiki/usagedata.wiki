@@ -4,22 +4,22 @@
 =Introduction=
 Skillsoft assets come in two types:
 
-*Fully Trackable*
+==Fully Trackable==
 These content types will report status, score and session time when accessed.
 
-* Skillsoft Courses
-* Skillsoft SkillSimulations
+  * Skillsoft Courses
+  * Skillsoft SkillSimulations
 
-*Passive*
+==Passive==
 These content types do not record any usage data, but will report fixed valuses for status and session time. These can be configured on the site but are typically incomplete and 00:00:00
 
-* Books24x7, including LDC and 50Lessons Video content
-* Skillsoft KnowledgeCenters
-* Skillsoft Leadership Advantage
-* Business Impact
-* Challenge Series
-* Learning Sparks
-* Mentored Assets and Mentoring
+  * Books24x7, including LDC and 50Lessons Video content
+  * Skillsoft KnowledgeCenters
+  * Skillsoft Leadership Advantage
+  * Business Impact
+  * Challenge Series
+  * Learning Sparks
+  * Mentored Assets and Mentoring
 
 =When is the data visible in Moodle=
 This will depend on the configuration of the [configuration#Skillsoft_Tracking_Mode Tracking Mode].
