@@ -39,6 +39,8 @@ Read [UserIdenticationDetails] to understand how the id is retrieved from Moodle
 
 *IMPORTANT: If the Moodle username is used, the username must also be  valid as an AICC CMIIdentifier value as defined by the AICC guidlines. Which means the only valid characters outside of A-Z (case insensitive) and 0-9, are a dash {{{-}}} (or hyphen) and the underscore {{{_}}} character. This means an email address is invalid as it contains the @ symbol and periods (.)*
 
+*IMPORTANT: Introduced in v2013051400 a new setting "Enforce Strict AICC student_id format" allows this strict checking to be disabled* 
+
 ==Skillsoft Default Group List==
 This option configures the default groupcodes used when utilising the new seamless login to Skillport option.
 
@@ -99,6 +101,7 @@ If the cycle locks, due to perhaps a failed report generation step, the code wou
 This setting allows you to rest the process. After the first CRON run resubmits the RUN request after you set this the setting is automatically disabled.
 
 ==Enforce Strict AICC student_id format==
+Introduced in version 2013051400
 By default the module implents the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
 
 When using the Moodle Username as the identifier this can cause issues if the Moodle username is for example an email address as the @ symbol and . are not allowed by the AICC 2.2 standard.
