@@ -96,4 +96,11 @@ When using "Track to OLSA (Custom Report)" there are a number of steps for the p
 
 If the cycle locks, due to perhaps a failed report generation step, the code would hang continually trying to POLL during the next cycle.
 
-This setting allows you to rest the process. After the first CRON run resubmits the RUN request after you set this the setting is automatically disabled. 
+This setting allows you to rest the process. After the first CRON run resubmits the RUN request after you set this the setting is automatically disabled.
+
+==Enforce Strict AICC student_id format==
+By default the module implents the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
+
+When using the Moodle Username as the identifier this can cause issues if the Moodle username is for example an email address as the @ symbol and . are not allowed by the AICC 2.2 standard.
+
+When disabled the strict checking on the student_id is disabled.
