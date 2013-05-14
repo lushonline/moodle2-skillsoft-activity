@@ -15,24 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of aicc
- *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package   mod-skillsoft
- * @author    Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @package mod
+ * @subpackage skillsoft
+ * @author Akinsaya Delamarre (adelamarre@remote-learner.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$module->version  = 2013051400;  // If version == 0 then module will not be installed
-$module->requires = 2010080300;  // Requires this Moodle version
-$module->cron     = 60;           // Period for cron to check this module (secs)
-
-
-?>
+ // This activity has not particular settings but the inherited from the generic
+ // backup_activity_task so here there isn't any class definition, like the ones
+ // existing in /backup/moodle2/backup_settingslib.php (activities section)

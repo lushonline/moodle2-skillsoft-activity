@@ -26,7 +26,7 @@
  *
  * @package   mod-skillsoft
  * @author	  Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -110,9 +110,9 @@ class aicchandler {
 	private $skillsoft;
 	private $attempt;
 
-	public function __construct($user, $skillsoft, $attempt=1)
+	public function __construct($user, $skillsoft, $attempt=1, $enforcestrictstudentid=0)
 	{
-		$this->cmi = new cmi();
+		$this->cmi = new cmi($enforcestrictstudentid);
 		$this->user = $user;
 		$this->skillsoft = $skillsoft;
 		$this->attempt = $attempt;
