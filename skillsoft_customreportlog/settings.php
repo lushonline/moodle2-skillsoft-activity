@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,12 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod
- * @subpackage skillsoft
- * @author Akinsaya Delamarre (adelamarre@remote-learner.net)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Settings and Link file for skillsoft_customreportlog report
+ *
+ * @package    report_skillsoft_customreportlog
+ * @copyright  2013 onwards Martin Holden}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- // This activity has not particular settings but the inherited from the generic
- // backup_activity_task so here there isn't any class definition, like the ones
- // existing in /backup/moodle2/backup_settingslib.php (activities section)
+defined('MOODLE_INTERNAL') || die;
+
+$ADMIN->add('reports', new admin_externalpage('report_skillsoft_customreportlog', get_string('pluginname', 'report_skillsoft_customreportlog'), "$CFG->wwwroot/report/skillsoft_customreportlog/index.php",'report/skillsoft_customreportlog:view'));
+
+// no report settings
+$settings = null;
