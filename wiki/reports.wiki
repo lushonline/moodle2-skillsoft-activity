@@ -4,12 +4,19 @@
 =Introduction=
 When troubleshooting "Track to OLSA" and using Moodle 2.3+ you can download and add the diagnostics reports.
 
+*NOTE: These are provide to assist in diagnosing issues, and are not designed for reporting use of the Skillsoft Assets. This is still done using the standard Moodle reports*
+
 These reports provide access via the Moodle Admin UI to:
   # List of all the Custom Report Synchronisations
   # List all of the usage data records imported from the Custom Report Synchronisations
   # List all of the TDR usage data records imported from the "On Demand Communications" Synchronisations
 
-To install the reports
+==Installation==
+*NOTE: You must be running Moodle 2.3 or later*
+
+Download the [http://code.google.com/p/moodle2-skillsoft-activity/downloads/detail?name=moodle2-skillsoft-activity-diagnosticreports-20130531.zip&can=2&q= Report ZIP]
+
+Extract to the report folder under the root of your Moodle install.
 
 
 
