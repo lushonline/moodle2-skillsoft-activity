@@ -16,9 +16,8 @@
 
 /**
  * Main file for skillsoft_customreportlog report
- * 
+ *
  * Simple diagnistics report to show the custom report requests issued.
- * Downloadable in various formats.
  *
  * @package    report_skillsoft_customreportlog
  * @copyright  2013 onwards Martin Holden}
@@ -26,167 +25,99 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->libdir.'/excellib.class.php');
-require_once($CFG->libdir.'/odslib.class.php');
 
-$out = optional_param('out', 'html', PARAM_TAG);   // Output (html, xls, ods, txt) defaults to html.
+// page parameters
+$page    = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 30, PARAM_INT);    // how many per page
+$sort    = optional_param('sort', 'handle', PARAM_ALPHA);
+$dir     = optional_param('dir', 'ASC', PARAM_ALPHA);
 
-$PAGE->set_url('/report/skillsoft_customreportlog/index.php', array('out' => $out));
+$PAGE->set_url('/report/skillsoft_customreportlog/index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $PAGE->set_pagelayout('report');
 
 require_login();
 require_capability('report/skillsoft_customreportlog:view', context_system::instance());
 
-//Get strings
-//Global
-$strreports = get_string('reports');
-$strusers = get_string('users');
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('pluginname', 'report_skillsoft_customreportlog'));
 
-//Plugin Specific
-$strname = get_string('pluginname', 'report_skillsoft_customreportlog');
-$strfilename = get_string('skillsoft_customreport_filename', 'report_skillsoft_customreportlog');
+$changescount = $DB->count_records('skillsoft_report_track');
+echo $OUTPUT->box_start();     // The forms section at the top
+echo get_string('skillsoft_customreportlog_recordcount', 'report_skillsoft_customreportlog').' '.$changescount;
+echo $OUTPUT->box_end();
 
-$strstartdate = get_string('skillsoft_customreport_startdate', 'report_skillsoft_customreportlog');
-$strenddate = get_string('skillsoft_customreport_enddate', 'report_skillsoft_customreportlog');
-$strhandle = get_string('skillsoft_customreport_handle', 'report_skillsoft_customreportlog');
-$strtimerequested = get_string('skillsoft_customreport_timerequested', 'report_skillsoft_customreportlog');
-$strtimedownloaded = get_string('skillsoft_customreport_timedownloaded', 'report_skillsoft_customreportlog');
-$strtimeimported = get_string('skillsoft_customreport_timeimported', 'report_skillsoft_customreportlog');
-$strtimeprocessed = get_string('skillsoft_customreport_timeprocessed', 'report_skillsoft_customreportlog');
-$strurl = get_string('skillsoft_customreport_url', 'report_skillsoft_customreportlog');
-$strurldownload = get_string('skillsoft_customreport_urldownload', 'report_skillsoft_customreportlog');
 
-//Get all the report records
-$reports = $DB->get_records_select('skillsoft_report_track', '', null, 'id desc', '*');
 
-// Content output (different based on $out).
+if ($changescount >0) {
 
-if ($out == 'xls') { // XLS output.
-    $workbook = new MoodleExcelWorkbook('-');
-    $workbook->send($strfilename . '.xls');
-    $worksheet = $workbook->add_worksheet($strfilename);
+	$columns = array(
+		'startdate' => get_string('skillsoft_customreportlog_startdate', 'report_skillsoft_customreportlog'),
+		'enddate' => get_string('skillsoft_customreportlog_enddate', 'report_skillsoft_customreportlog'),
+		'handle' => get_string('skillsoft_customreportlog_handle', 'report_skillsoft_customreportlog'),
+		'timerequested' => get_string('skillsoft_customreportlog_timerequested', 'report_skillsoft_customreportlog'),
+		'timedownloaded' => get_string('skillsoft_customreportlog_timedownloaded', 'report_skillsoft_customreportlog'),
+		'timeimported' => get_string('skillsoft_customreportlog_timeimported', 'report_skillsoft_customreportlog'),
+		'timeprocessed' => get_string('skillsoft_customreportlog_timeprocessed', 'report_skillsoft_customreportlog'),
+		'url' => get_string('skillsoft_customreportlog_url', 'report_skillsoft_customreportlog'),
+	);
+	$hcolumns = array();
 
-    //Output header row
-    $row = 0;
-    $worksheet->write($row, 0, $strstartdate);
-    $worksheet->write($row, 1, $strenddate);
-    $worksheet->write($row, 2, $strhandle);
-    $worksheet->write($row, 3, $strurl);
-    $worksheet->write($row, 4, $strtimerequested);
-    $worksheet->write($row, 5, $strtimedownloaded);
-    $worksheet->write($row, 6, $strtimeimported);
-    $worksheet->write($row, 7, $strtimeprocessed);
-    
-    //Move to first row of data
-    $row++;
 
-    foreach ($reports as $rec) {
-        $worksheet->write($row, 0, $rec->startdate);
-        $worksheet->write($row, 1, $rec->enddate);
-        $worksheet->write($row, 2, $rec->handle);
-        $worksheet->write($row, 3, $rec->downloaded == 1 ? $rec->url :'');
-        $worksheet->write($row, 4, date('c',$rec->timerequested));
-        $worksheet->write($row, 5, $rec->downloaded == 1? date('c',$rec->timedownloaded):'');
-        $worksheet->write($row, 6, $rec->imported == 1 ? date('c',$rec->timeimported):'');
-        $worksheet->write($row, 7, $rec->processed == 1 ? date('c',$rec->timeprocessed):'');
-        $row++;
-    }
-    $workbook->close();
+	if (!isset($columns[$sort])) {
+		$sort = 'handle';
+	}
 
-} else if ($out == 'ods') { // ODS output.
-	$workbook = new MoodleODSWorkbook('-');
-    $workbook->send($strfilename . '.ods');
-    $worksheet = $workbook->add_worksheet($strfilename);
+	foreach ($columns as $column=>$strcolumn) {
+		if ($column != 'url') {
+			if ($sort != $column) {
+				$columnicon = '';
+				$columndir = 'ASC';
+			} else {
+				$columndir = $dir == 'ASC' ? 'DESC':'ASC';
+				$columnicon = $dir == 'ASC' ? 'down':'up';
+				$columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
 
-    //Output header row
-    $row = 0;
-    $worksheet->write($row, 0, $strstartdate);
-    $worksheet->write($row, 1, $strenddate);
-    $worksheet->write($row, 2, $strhandle);
-    $worksheet->write($row, 3, $strurl);
-    $worksheet->write($row, 4, $strtimerequested);
-    $worksheet->write($row, 5, $strtimedownloaded);
-    $worksheet->write($row, 6, $strtimeimported);
-    $worksheet->write($row, 7, $strtimeprocessed);
-    
-    //Move to first row of data
-    $row++;
+			}
+			//If we sort revert to page 0
+			$hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+		} else {
+			$hcolumns[$column] = $strcolumn;
+		}
+	}
 
-    foreach ($reports as $rec) {
-        $worksheet->write($row, 0, $rec->startdate);
-        $worksheet->write($row, 1, $rec->enddate);
-        $worksheet->write($row, 2, $rec->handle);
-        $worksheet->write($row, 3, $rec->downloaded == 1 ? $rec->url :'');
-        $worksheet->write($row, 4, date('c',$rec->timerequested));
-        $worksheet->write($row, 5, $rec->downloaded == 1? date('c',$rec->timedownloaded):'');
-        $worksheet->write($row, 6, $rec->imported == 1 ? date('c',$rec->timeimported):'');
-        $worksheet->write($row, 7, $rec->processed == 1 ? date('c',$rec->timeprocessed):'');
-        $row++;
-    }
-    $workbook->close();
-} else if ($out == 'txt') { // CSV output.
-    header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename={$strfilename}.txt");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-    header("Pragma: public");
+	$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+	echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
 
-    //Header
-    echo '"'.$strstartdate.'",';
-    echo '"'.$strenddate.'",';
-    echo '"'.$strhandle.'",';
-    echo '"'.$strurl.'",';
-    echo '"'.$strtimerequested.'",';
-    echo '"'.$strtimedownloaded.'",';
-    echo '"'.$strtimeimported.'",';
-    echo '"'.$strtimeprocessed.'"';
-    echo "\r\n";
+	$table = new html_table();
+	$table->head  = array(
+	$hcolumns['startdate'], $hcolumns['enddate'], $hcolumns['handle'],
+	$hcolumns['timerequested'], $hcolumns['timedownloaded'], $hcolumns['timeimported'],
+	$hcolumns['timeprocessed'], $hcolumns['url'],
+	);
+	$table->width = '95%';
+	$table->data  = array();
 
-    foreach ($reports as $rec) {
-        echo '"'.$rec->startdate.'",';
-        echo '"'.$rec->enddate.'",';
-        echo '"'.$rec->handle.'",';
-        echo '"'.($rec->downloaded == 1 ? $rec->url :'').'",';
-        echo '"'.date('c',$rec->timerequested).'",';
-        echo '"'.($rec->downloaded == 1? date('c',$rec->timedownloaded):'').'",';
-        echo '"'.($rec->imported == 1 ? date('c',$rec->timeimported):'').'",';
-        echo '"'.($rec->processed == 1 ? date('c',$rec->timeprocessed):'').'"';
-        echo "\r\n";
-    }
+	$orderby = "$sort $dir";
 
-} else { // HTML output.
-	echo $OUTPUT->header();
-	echo $OUTPUT->heading(get_string('pluginname', 'report_skillsoft_customreportlog'));
+	$reports = $DB->get_recordset('skillsoft_report_track', array(), $orderby, '*', $page*$perpage, $perpage);
 
-    // Print download selector.
-    $options = array('xls' => get_string('downloadexcel'),
-                     'ods' => get_string('downloadods'),
-                     'txt' => get_string('downloadtext'));
-    echo $OUTPUT->single_select(new moodle_url('/report/skillsoft_customreportlog/index.php'),'out', $options);
+	$strurldownload = get_string('skillsoft_customreportlog_urldownload', 'report_skillsoft_customreportlog');
+	
+	foreach ($reports as $rec) {
+		$row = array();
+		$row[] = $rec->startdate;
+		$row[] = $rec->enddate;
+		$row[] = $rec->handle;
+		$row[] = userdate($rec->timerequested);
+		$row[] = $rec->downloaded == 1? userdate($rec->timedownloaded):'';
+		$row[] = $rec->imported == 1 ? userdate($rec->timeimported):'';
+		$row[] = $rec->processed == 1 ? userdate($rec->timeprocessed):'';
+		$row[] = $rec->downloaded == 1 ? '<a href="'.new moodle_url($rec->url).'" target="_blank">'.$strurldownload.'</a>' :'';
+		$table->data[] = $row;
+	}
+	$reports->close();
 
-    echo '<div class="clearer">&nbsp;</div>';
+	echo html_writer::table($table);
 
-    $table = new html_table();
-    $table->width = '90%';
-    $table->head = array($strstartdate,$strenddate,$strhandle,$strurl,$strtimerequested,$strtimedownloaded,$strtimeimported,$strtimeprocessed);
-    $table->align = array('left', 'left', 'left', 'left', 'left', 'left', 'left', 'left');
-    foreach ($reports as $rec) {
-        $table->data[] = new html_table_row(array(
-	        $rec->startdate,
-	        $rec->enddate,
-	        $rec->handle,
-	        $rec->downloaded == 1 ? '<a href="'.new moodle_url($rec->url).'" target="_blank">'.$strurldownload.'</a>' :'',
-	        userdate($rec->timerequested),
-	        $rec->downloaded == 1? userdate($rec->timedownloaded):'',
-	        $rec->imported == 1 ? userdate($rec->timeimported):'',
-	        $rec->processed == 1 ? userdate($rec->timeprocessed):''
-           ));
-    }
-    echo html_writer::table($table);
-
-    echo $OUTPUT->footer();
 }
-
-// Close the recordset (common for all outputs).
-$reports->close();
+echo $OUTPUT->footer();
