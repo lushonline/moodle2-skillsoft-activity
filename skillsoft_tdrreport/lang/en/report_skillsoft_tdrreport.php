@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Skillsoft TDR Report Audit Log';
+$string['pluginname'] = 'Imported TDR Records';
 $string['skillsoft_report_menu'] = 'Skillsoft Reports';
-$string['skillsoft_tdrreport:view'] = 'View Skillsoft TDR Report Audit Log';
+$string['skillsoft_tdrreport:view'] = 'View Imported TDR Records';
 
 //Column Headers
 $string['skillsoft_tdrreport_tdrid'] = 'TDR ID';
@@ -37,7 +37,7 @@ $string['skillsoft_tdrreport_assetid'] = 'Asset ID';
 $string['skillsoft_tdrreport_data'] = 'TDR Data';
 $string['skillsoft_tdrreport_processed'] = 'Processed';
 
-$string['skillsoft_tdrreport_filterlabel'] = 'Moodle User ID';
+$string['skillsoft_tdrreport_filterlabel'] = 'Filter';
 $string['skillsoft_tdrreport_applyfilter'] = 'Filter';
 $string['skillsoft_tdrreport_recordcount'] = 'Records found: ';
 
