@@ -24,21 +24,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Skillsoft Custom Report Audit Log';
+$string['pluginname'] = 'Custom Report Retrieval Log';
 $string['skillsoft_report_menu'] = 'Skillsoft Reports';
-$string['skillsoft_customreportlog:view'] = 'View Skillsoft Custom Report Audit Log';
+$string['skillsoft_customreportlog:view'] = 'View Custom Report Retrieval Log';
+
+$string['skillsoft_customreportlog_recordcount'] = 'Records found: ';
 
 //Column Headers
-$string['skillsoft_customreport_startdate'] = 'Start Date';
-$string['skillsoft_customreport_enddate'] = 'End Date';
-$string['skillsoft_customreport_handle'] = 'Handle';
-$string['skillsoft_customreport_timerequested'] = 'Requested';
-$string['skillsoft_customreport_timedownloaded'] = 'Downloaded';
-$string['skillsoft_customreport_timeimported'] = 'Imported';
-$string['skillsoft_customreport_timeprocessed'] = 'Processed';
-$string['skillsoft_customreport_url'] = 'Remote';
-$string['skillsoft_customreport_urldownload'] = 'Download';
+$string['skillsoft_customreportlog_startdate'] = 'Start Date';
+$string['skillsoft_customreportlog_enddate'] = 'End Date';
+$string['skillsoft_customreportlog_handle'] = 'Handle';
+$string['skillsoft_customreportlog_timerequested'] = 'Requested';
+$string['skillsoft_customreportlog_timedownloaded'] = 'Downloaded';
+$string['skillsoft_customreportlog_timeimported'] = 'Imported';
+$string['skillsoft_customreportlog_timeprocessed'] = 'Processed';
+$string['skillsoft_customreportlog_url'] = 'Original Report';
+$string['skillsoft_customreportlog_urldownload'] = 'Download';
 
 
-$string['skillsoft_customreport_filename'] = 'skillsoft_customreport_auditlog';
+$string['skillsoft_customreportlog_filename'] = 'skillsoft_customreportlog_auditlog';
 
