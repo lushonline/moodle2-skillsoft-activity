@@ -23,8 +23,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
-$ADMIN->add('reports', new admin_externalpage('report_skillsoft_customreportlog', get_string('pluginname', 'report_skillsoft_customreportlog'), "$CFG->wwwroot/report/skillsoft_customreportlog/index.php",'report/skillsoft_customreportlog:view'));
+$ADMIN->add('reports', new admin_category('skillsoft_reports', get_string('skillsoft_report_menu', 'report_skillsoft_customreportlog')));
+$ADMIN->add('skillsoft_reports', new admin_externalpage('report_skillsoft_customreportlog', get_string('pluginname', 'report_skillsoft_customreportlog'), "$CFG->wwwroot/report/skillsoft_customreportlog/index.php",'report/skillsoft_customreportlog:view'));
 
 // no report settings
 $settings = null;
