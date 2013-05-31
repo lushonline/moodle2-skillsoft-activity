@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2013052900; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version = 2013053100; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires = 2012062500; // Requires this Moodle version (v2.3 release).
 $plugin->component = 'report_skillsoft_tdrreport'; // Full name of the plugin.
 $plugin->maturity = MATURITY_STABLE; // Maturity of the plugin.
