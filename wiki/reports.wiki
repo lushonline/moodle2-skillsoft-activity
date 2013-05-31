@@ -1,0 +1,15 @@
+#summary Overview of Diagnostic Logs
+#labels Phase-Deploy
+<wiki:toc max_depth="1" />
+=Introduction=
+When troubleshooting "Track to OLSA" and using Moodle 2.3+ you can download and add the diagnostics reports.
+
+These reports provide access via the Moodle Admin UI to:
+  # List of all the Custom Report Synchronisations
+  # List all of the usage data records imported from the Custom Report Synchronisations
+  # List all of the TDR usage data records imported from the "On Demand Communications" Synchronisations
+
+To install the reports
+
+
+

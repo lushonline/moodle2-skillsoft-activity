@@ -14,6 +14,7 @@
   * [olsadiag OLSA Diagnostics Test Page]
   * [contentdiag Basic Courseware Diagnostics]
   * [stuckreport Custom Report Cycle is stuck]
+  * [reports Diagnostic Report Tools] 
 
 *Technical Info
   * [UserIdenticationDetails How is a users Identification sent to OLSA]
