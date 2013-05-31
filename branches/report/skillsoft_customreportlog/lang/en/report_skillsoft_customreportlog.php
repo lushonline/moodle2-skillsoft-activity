@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Skillsoft Custom Report Audit Log';
+$string['skillsoft_report_menu'] = 'Skillsoft Reports';
 $string['skillsoft_customreportlog:view'] = 'View Skillsoft Custom Report Audit Log';
 
 //Column Headers
