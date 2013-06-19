@@ -30,9 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2013051400;  // If version == 0 then module will not be installed
+$module->version  = 2013061900;  // If version == 0 then module will not be installed
 $module->requires = 2010080300;  // Requires this Moodle version
 $module->cron     = 60;           // Period for cron to check this module (secs)
-
-
-?>
+$module->component = 'skillsoft'; // Full name of the plugin (used for diagnostics)
