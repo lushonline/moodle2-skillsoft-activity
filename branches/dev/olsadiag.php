@@ -382,4 +382,4 @@ if ($continue) {
 }
 
 echo $OUTPUT->footer();
-?>
+
