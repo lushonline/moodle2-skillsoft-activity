@@ -24,7 +24,7 @@
  *
  * @package   mod-skillsoft
  * @author 	  Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -115,6 +115,7 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 
 		// Asset Type
 		$mform->addElement('hidden', 'assettype', null);
+		$mform->setType('assettype', PARAM_TEXT);
 
 		// Launch URL
 
@@ -128,6 +129,7 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 			$mform->addHelpButton('launch', 'skillsoft_launch', 'skillsoft');
 	    } else {
         	$mform->addElement('hidden', 'launch', NULL, array('id'=>'id_launch'));
+        	$mform->setType('launch', PARAM_TEXT);
         }
 
 
@@ -139,6 +141,7 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 			$mastery[$i] = "$i";
 		}
 		$mform->addElement('select', 'mastery', get_string('skillsoft_mastery','skillsoft'), $mastery);
+		$mform->setType('mastery', PARAM_INT);
 		$mform->setDefault('mastery', '');
 		//$mform->setHelpButton('mastery',array('mastery', get_string('skillsoft_mastery', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('mastery', 'skillsoft_mastery', 'skillsoft');
@@ -146,8 +149,13 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 
 		//Time modified
 		$mform->addElement('hidden', 'timemodified');
+		$mform->setType('timemodified', PARAM_INT);
+		
 		$mform->addElement('hidden', 'timecreated');
+		$mform->setType('timecreated', PARAM_INT);
+		
 		$mform->addElement('hidden', 'completable');
+		$mform->setType('competable', PARAM_BOOL);
 		
 		//-------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------
@@ -164,4 +172,3 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 
 
 }
-?>

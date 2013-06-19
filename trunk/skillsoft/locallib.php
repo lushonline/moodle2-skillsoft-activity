@@ -262,7 +262,9 @@ function skillsoft_setFirstAccessDate($userid,$skillsoftid,$attempt,$time) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
-	if ($track = $DB->get_record_select('skillsoft_au_track',"userid='$userid' AND skillsoftid='$skillsoftid' AND attempt='$attempt' AND element='[SUMMARY]firstaccess'")) {
+	$element = '[SUMMARY]firstaccess';
+	$params = array($userid,$skillsoftid,$attempt,$element);
+	if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 		//We have value so do nothing
 	} else {
 		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]firstaccess', $time);
@@ -301,7 +303,9 @@ function skillsoft_setCompletedDate($userid,$skillsoftid,$attempt,$time) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
-	if ($track = $DB->get_record_select('skillsoft_au_track',"userid='$userid' AND skillsoftid='$skillsoftid' AND attempt='$attempt' AND element='[SUMMARY]completed'")) {
+	$element = '[SUMMARY]completed';
+	$params = array($userid,$skillsoftid,$attempt,$element);
+	if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 		//We have value so do nothing
 	} else {
 		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]completed', $time);
@@ -323,18 +327,20 @@ function skillsoft_setAccessCount($userid,$skillsoftid,$attempt,$value=0) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
-
+	$element = '[SUMMARY]accesscount';
 	if ($value == 0 ) {
-		if ($track = $DB->get_record_select('skillsoft_au_track',"userid='$userid' AND skillsoftid='$skillsoftid' AND attempt='$attempt' AND element='[SUMMARY]accesscount'")) {
+			
+		$params = array($userid,$skillsoftid,$attempt,$element);
+		if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 			//We have value so increment it
 			$accesscount = $track->value;
 			$accesscount++;
-			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]accesscount', $accesscount);
+			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $accesscount);
 		} else {
-			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]accesscount', 1);
+			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, 1);
 		}
 	} else {
-		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]accesscount', $value);
+		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $value);
 	}
 	return $id;
 }
@@ -354,11 +360,13 @@ function skillsoft_setFirstScore($userid,$skillsoftid,$attempt,$score) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
+	$element = '[SUMMARY]firstscore';
 	if ($score != 0) {
-		if ($track = $DB->get_record_select('skillsoft_au_track',"userid='$userid' AND skillsoftid='$skillsoftid' AND attempt='$attempt' AND element='[SUMMARY]firstscore'")) {
+		$params = array($userid,$skillsoftid,$attempt,$element);
+		if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 			//We have value so do nothing
 		} else {
-			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]firstscore', $score);
+			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $score);
 		}
 	}
 	return $id;
@@ -377,8 +385,9 @@ function skillsoft_setCurrentScore($userid,$skillsoftid,$attempt,$score) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
+	$element = '[SUMMARY]currentscore';
 	if ($score != 0) {
-		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]currentscore', $score);
+		$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $score);
 	}
 	return $id;
 }
@@ -397,15 +406,18 @@ function skillsoft_setBestScore($userid,$skillsoftid,$attempt,$score) {
 	$id = null;
 	//Work to support multiple attempts
 	//$attempt = 1;
+	$element = '[SUMMARY]bestscore';
+	
 	if ($score != 0) {
-		if ($track = $DB->get_record_select('skillsoft_au_track',"userid='$userid' AND skillsoftid='$skillsoftid' AND attempt='$attempt' AND element='[SUMMARY]bestscore'")) {
+		$params = array($userid,$skillsoftid,$attempt,$element);
+		if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 			//We this score is higher
 			$currentscore =  $track->value;
 			if ($score > $currentscore) {
-				$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]bestscore', $score);
+				$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $score);
 			}
 		} else {
-			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, '[SUMMARY]bestscore', $score);
+			$id = skillsoft_insert_track($userid, $skillsoftid, $attempt, $element, $score);
 		}
 	}
 	return $id;
@@ -1332,7 +1344,3 @@ function skillsoft_process_received_customreport($handle, $trace=false, $prefix=
 		mtrace($prefix.get_string('skillsoft_customreport_process_end','skillsoft').' (took '.$duration.' seconds)');
 	}
 }
-
-
-?>
-
