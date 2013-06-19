@@ -382,5 +382,3 @@ class cmi {
 		$this->core = new core($enforcestrictstudentid);
 	}
 }
-
-?>

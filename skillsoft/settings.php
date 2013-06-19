@@ -115,5 +115,3 @@ $settings->add(new admin_setting_configcheckbox('skillsoft_strictaiccstudentid',
 		get_string('skillsoft_strictaiccstudentid', 'skillsoft'),
 		get_string('skillsoft_strictaiccstudentiddesc', 'skillsoft'),
 		1));		
-
-?>

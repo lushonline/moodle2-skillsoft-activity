@@ -117,6 +117,3 @@ if (!empty($skillsoft->duration)) {
 echo $OUTPUT->box(skillsoft_view_display($skillsoft, $USER, true), 'generalbox boxaligncenter boxwidthwide', 'courselaunch');
 
 echo $OUTPUT->footer();
-
-
-?>

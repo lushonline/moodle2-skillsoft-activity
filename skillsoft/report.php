@@ -273,4 +273,3 @@ echo $OUTPUT->box_end();
 if (empty($noheader)) {
 	echo $OUTPUT->footer();
 }
-?>
