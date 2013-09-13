@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 $id = required_param('id', PARAM_TEXT);       // Course Module ID, or
 $assetid = required_param('assetid', PARAM_TEXT);       // SkillSoft AssetID
 
-//$PAGE->set_context(CONTEXT_COURSE, $id);
+require_login($id, false);
 
 $url = new moodle_url('/mod/skillsoft/getolsadata.php', array('id'=>$id,'assetid'=>$assetid));
 $target = $url->out(false,array(),false);
