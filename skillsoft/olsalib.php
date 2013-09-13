@@ -20,7 +20,7 @@
  *
  * @package   mod-skillsoft
  * @author    Martin Holden
- * @copyright 2009-2011 Martin Holden
+ * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -112,20 +112,23 @@ class olsa_soapclient extends SoapClient{
 	 * @param string $url - Full URL to download
 	 * @param string $filename - Filename to save to
 	 * @param string $cachefolder - Folder to store downloads
- 	 * @param int $cachetime - How long the saved file is valid for in seconds
- 	 * @param bool $forcedownload - Force the files to be downloaded
+	 * @param int $cachetime - How long the saved file is valid for in seconds
+	 * @param bool $forcedownload - Force the files to be downloaded
 	 * @return object
 	 */
-	private function downloadfile($url, $filename , $forcedownload=false, $cachefolder='temp/wsdl' , $cachetime=86400) {
+	/*
+	 * 13-SEP-2013 Modifications to use CACHE folder rather than UPLOAD and change name to skillsoft
+	 */
+	private function downloadfile($url, $filename , $forcedownload=false, $cachefolder='skillsoft' , $cachetime=86400) {
 		global $CFG;
 
-		$basefolder = str_replace('\\','/', $CFG->dataroot);
+		$basefolder = str_replace('\\','/', $CFG->cachedir);
 		$folder=$cachefolder;
 
-		/// Create temp directory if necesary
-		if (!make_upload_directory($folder, false)) {
+		/// Create cache directory if necesary
+		if (!make_cache_directory($folder, false)) {
 			//Couldn't create temp folder
-			throw new Exception('Could not create WSDL Cache Folder: '.$basefolder.$folder);
+			throw new Exception('Could not create WSDL Cache Folder (skillsoft): '.$basefolder.$folder);
 		}
 
 		$fullpath = $basefolder.'/'.$folder.'/'.$filename;
@@ -145,10 +148,10 @@ class olsa_soapclient extends SoapClient{
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
 				curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
 				curl_setopt($ch, CURLOPT_FILE, $fp);
-				
+
 				//Force SSLv3 to workaround Openssl 1.0.1 issue
 				//See https://bugs.launchpad.net/ubuntu/+source/curl/+bug/595415
-				curl_setopt($ch, CURLOPT_SSLVERSION, 3); 
+				curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 
 				//Setup Proxy Connection
 
@@ -191,8 +194,8 @@ class olsa_soapclient extends SoapClient{
 					$downloadresult->filepath = $basefolder.'/'.$folder.'/'.$filename;
 					$downloadresult->error = '';
 					fclose($fp);
-					
-					
+						
+						
 				} else {
 					fclose($fp);
 					$error    = curl_error($ch);
@@ -290,7 +293,7 @@ class olsa_soapclient extends SoapClient{
 		} else {
 			$forcedownload = false;
 		}
-		
+
 		//Attempt to download the WSDL
 		if ($wsdlcontent = $this->downloadfile($wsdl,'olsa.wsdl',$forcedownload)) {
 			//Check for HTTP 200 response
@@ -324,9 +327,10 @@ class olsa_soapclient extends SoapClient{
 	}
 
 	/*Overload the original method, to use CURL for requests as SOAPClient has limited proxy support
-	 *
+	 * 13-SEP-2013 Modifications to signature to adhere to PHp STRICT based on code supplied by
+	 * https://github.com/eugeneventer/moodle2-skillsoft/commit/85b4404433664e030252625f917f5e666a1c1d43
 	 */
-	public function __doRequest($request, $location, $action, $version) {
+	public function __doRequest($request, $location, $action, $version, $one_way=0) {
 		global $CFG;
 
 		$headers = array(
@@ -346,8 +350,8 @@ class olsa_soapclient extends SoapClient{
 
 						//Force SSLv3 to workaround Openssl 1.0.1 issue
 						//See https://bugs.launchpad.net/ubuntu/+source/curl/+bug/595415
-						curl_setopt($ch, CURLOPT_SSLVERSION, 3); 
-						
+						curl_setopt($ch, CURLOPT_SSLVERSION, 3);
+
 						if (!empty($CFG->proxyhost)) {
 							// SOCKS supported in PHP5 only
 							if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
@@ -389,7 +393,10 @@ class olsa_soapclient extends SoapClient{
 	}
 
 	/*Overload the original method, and add the WS-Security Header */
-	public function __soapCall($function_name,$arguments,$options=null,$input_headers=null,$output_headers=null){
+	/* 13-SEP-2013 Modifications to signature to adhere to PHp STRICT based on code supplied by
+	 * https://github.com/eugeneventer/moodle2-skillsoft/commit/85b4404433664e030252625f917f5e666a1c1d43
+	 */
+	public function __soapCall($function_name,$arguments,$options=array(),$input_headers=null,&$output_headers=array()){
 		$result = parent::__soapCall($function_name,$arguments,$options,$this->generate_header());
 
 		return $result;
@@ -852,34 +859,34 @@ function OC_GetTrackingData() {
  * @return olsasoapresponse olsasoapresponse->result. result->olsaURL is the time/user scoped URL to redirect the user to
  */
 function SO_GetMultiActionSignOnUrl(
-				$userName,
-				$firstName = '',
-				$lastName = '',
-				$email = '',
-				$password = '',
-				$groupCode = '',
-				$actionType = 'home',
-				$assetId = '',
-				$enable508 = false,
-				$authType = 'End-User',
-				$newUserName = '',
-				$active = true,
-				$address1 = '',
-				$address2 = '',
-				$city = '',
-				$state = '',
-				$zip = '',
-				$country = '',
-				$phone = '',
-				$sex = '',
-				$ccExpr = '',
-				$ccNumber = '',
-				$ccType = '',
-				$free1 = '',
-				$birthDate = '',
-				$language = '',
-				$manager = ''
-				) {
+$userName,
+$firstName = '',
+$lastName = '',
+$email = '',
+$password = '',
+$groupCode = '',
+$actionType = 'home',
+$assetId = '',
+$enable508 = false,
+$authType = 'End-User',
+$newUserName = '',
+$active = true,
+$address1 = '',
+$address2 = '',
+$city = '',
+$state = '',
+$zip = '',
+$country = '',
+$phone = '',
+$sex = '',
+$ccExpr = '',
+$ccNumber = '',
+$ccType = '',
+$free1 = '',
+$birthDate = '',
+$language = '',
+$manager = ''
+) {
 	global $CFG;
 
 	if (!isolsaconfigurationset()) {
