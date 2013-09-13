@@ -138,6 +138,10 @@ function xmldb_skillsoft_upgrade($oldversion) {
     	$result = true;
     }
     
+    if ($result && $oldversion < 2013091300) {
+    	upgrade_mod_savepoint(true, 2013091300, 'skillsoft');
+    	$result = true;
+    }
     
 	return $result;
 }

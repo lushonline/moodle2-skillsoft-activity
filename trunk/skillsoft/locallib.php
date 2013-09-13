@@ -104,7 +104,7 @@ function skillsoft_reset_processed($assetid) {
 function skillsoft_create_sessionid($userid, $skillsoftid) {
 	global $DB;
 
-	$key = new object();
+	$key = new stdClass();
 	$key->skillsoftid      = $skillsoftid;
 	$key->userid        = $userid;
 	$key->timecreated   = time();
@@ -218,6 +218,13 @@ function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
 	//Work to support multiple attempts
 	//$attempt = 1;
 
+	/* 13-SEP-2013
+	 * Added error trap to convert $value=NULL to null string ""
+	 */
+	if ($value===NULL) {
+		$value = "";
+	}
+	
 	$params = array($userid,$skillsoftid,$attempt,$element);
 	if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
 	
@@ -225,6 +232,7 @@ function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
 		$track->timemodified = time();
 		$id = $DB->update_record('skillsoft_au_track',$track);
 	} else {
+		$track = new stdClass();
 		$track->userid = $userid;
 		$track->skillsoftid = $skillsoftid;
 		$track->attempt = $attempt;
@@ -464,6 +472,7 @@ function skillsoft_get_tracks($skillsoftid,$userid,$attempt='') {
 
 	$params=array($userid,$skillsoftid,$attempt);
 	if ($tracks = $DB->get_records_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=?",$params,'element ASC')) {
+		$usertrack = new stdClass();
 		$usertrack->userid = $userid;
 		$usertrack->skillsoftid = $skillsoftid;
 		$usertrack->score_raw = '';
@@ -722,7 +731,7 @@ function byte_convert($bytes)
 function skillsoft_insert_customreport_requested($handle,$startdate='',$enddate='') {
 	global $DB;
 	$id = null;
-
+	$report = new stdClass();
 	$report->handle = $handle;
 	$report->startdate = $startdate;
 	$report->enddate = $enddate;
@@ -1051,15 +1060,15 @@ function skillsoft_download_customreport($handle, $url, $folder=NULL, $trace=fal
 		mtrace($prefix.$prefix.get_string('skillsoft_customreport_download_url', 'skillsoft',$url));
 	}
 
-	$basefolder = str_replace('\\','/', $CFG->dataroot);
+	$basefolder = str_replace('\\','/', $CFG->tempdir);
 	$downloadedfile=NULL;
 
 	if ($folder==NULL) {
-		$folder='temp/reports';
+		$folder='reports';
 	}
 
 	/// Create temp directory if necesary
-	if (!make_upload_directory($folder, false)) {
+	if (!make_temp_directory($folder, false)) {
 		//Couldn't create temp folder
 		if ($trace) {
 			mtrace($prefix.$prefix.get_string('skillsoft_customreport_download_createdirectoryfailed', 'skillsoft', $basefolder.'/'.$folder));
@@ -1126,7 +1135,7 @@ function skillsoft_download_customreport($handle, $url, $folder=NULL, $trace=fal
 		// Check if any error occured
 		if(!curl_errno($ch))
 		{
-			$downloadresult = new object();
+			$downloadresult = new stdClass();
 			$downloadresult->bytes = byte_convert(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 			$downloadresult->total_time = curl_getinfo($ch, CURLINFO_TOTAL_TIME);
 			$downloadresult->filepath = $basefolder.'/'.$folder.'/'.$filename;
