@@ -30,10 +30,9 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/olsalib.php');
 
 $a = required_param('a', PARAM_INT); 
-
 if (!empty($a)) {
 	if (! $skillsoft = $DB->get_record('skillsoft', array('id'=> $a))) {
-		print_error('Course module is incorrect');
+		print_error('Skillsoft asset is incorrect');
 	}
 	if (! $course = $DB->get_record('course', array('id'=> $skillsoft->course))) {
 		print_error('Course is misconfigured');
@@ -46,10 +45,6 @@ if (!empty($a)) {
 }
 
 require_login($course->id, false, $cm);
-//$PAGE->set_context(CONTEXT_COURSE, $course->id);
-
-//$context = get_context_instance(CONTEXT_COURSE, $course->id);
-
 $strskillsofts = get_string('modulenameplural', 'skillsoft');
 $strskillsoft  = get_string('modulename', 'skillsoft');
 
@@ -161,12 +156,17 @@ $waitimage = '<p><img src="'. $OUTPUT->pix_url('wait', 'skillsoft').'" class="ic
 			//print "document.location = ".'"'.$response->result->olsaURL.'";';
 		} else {
 			//error($response->errormessage);
-			
 			print "document.getElementById('waitingmessage').style.display = 'none';";
 			print "document.getElementById('errormessage').style.display = 'block';";
 		}
 		?>	
 	}
+
+	function closeWindow() {
+		window.open('', '_self', '');
+		window.close();
+	}
+	
 
 
 </script>
@@ -177,7 +177,7 @@ $waitimage = '<p><img src="'. $OUTPUT->pix_url('wait', 'skillsoft').'" class="ic
 </div>
 <div id="errormessage" style="display: none;">
 <p><?php
-print close_window_button();
+print '<button type="button" onclick="closeWindow();">'.get_string('closewindow').'</button>';
 if ($CFG->skillsoft_trackingmode != TRACK_TO_LMS) {
 	print '<p>'.get_string('skillsoft_ssoerror', 'skillsoft').'</p>';
 }
