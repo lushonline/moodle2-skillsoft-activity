@@ -10,6 +10,7 @@
 defined('MOODLE_INTERNAL') || die();
 $string['pluginadministration'] = 'Skillsoft Asset';
 $string['pluginname'] = 'Skillsoft Asset';
+$string['skillsoft:addinstance'] = 'Add a new Skillsoft activity';
 
 $string['modulename'] = 'Skillsoft Asset';
 $string['modulename_help'] = '<p>This module provides a way to simply create a new activity for a Skillsoft OLSA Hosted asset that will be tracked by Moodle</p>
@@ -18,7 +19,7 @@ $string['modulename_help'] = '<p>This module provides a way to simply create a n
 
 <strong>Skillsoft Open Learning Services Architecture (OLSA)</strong>
 <p>The Skillsoft Open Learning Services Architecture (OLSA) is an enhancements to the Skillsoft Skillport LMS architecture.</p>
-<p>It is made up of two components:</p> 
+<p>It is made up of two components:</p>
 <ul>
 <li>LMS Interface - This provides a means for Moodle to launch Skillsoft assets using the industry standard AICC HACP method.</li>
 <li>Web Services - This provides a means for another system to interact with Skillport using standards based Web Services. These provide the functionality in this module to support retrieving of course metadata and synchronising progress between the systems</li>
