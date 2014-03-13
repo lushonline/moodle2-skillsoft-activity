@@ -140,7 +140,7 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 		$mform->setType('timecreated', PARAM_INT);
 		
 		$mform->addElement('hidden', 'completable');
-		$mform->setType('competable', PARAM_BOOL);
+		$mform->setType('completable', PARAM_BOOL);
 		
 		//-------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------

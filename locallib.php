@@ -143,7 +143,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		
 		$launcher = $skillsoft->launch;
 		//Section 508 Enhancement - add x508 value of $user->screenreader
-		if ($user->screenreader == 1) {
+		if (isset($user->screenreader) && $user->screenreader == 1) {
 			$launcher .= $connector.'x508=1';
 		}
 		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
