@@ -43,6 +43,10 @@ function skillsoft_iscompletable($skillsoft) {
 function skillsoft_add_instance($skillsoft) {
 	global $CFG, $DB;
 
+    require_once('locallib.php'); // Needed for constants, that should probably move to this file
+
+    //print_object($skillsoft); // Enable for debugging
+
 	$skillsoft->timecreated = time();
 	$skillsoft->timemodified = time();
 	$skillsoft->completable = skillsoft_iscompletable($skillsoft);
@@ -778,6 +782,15 @@ function skillsoft_cron () {
 			skillsoft_customreport($CFG->skillsoft_reportincludetoday);
 		}
 	}
+
+    if ($CFG->skillsoft_catalogueimportcrontask) {
+        if (time() > $CFG->skillsoft_catalogueimportfrequency + skillsoft_full_course_listing_timestamp()) {
+            if (!skillsoft_full_course_listing_download_running()
+                && !skillsoft_bulk_course_metadata_download_running()) {
+                    skillsoft_queue_full_course_listing_download();
+                }
+        }
+    }
 	return true;
 }
 
@@ -893,3 +906,4 @@ function skillsoft_supports($feature) {
 		default: return null;
 	}
 }
+
