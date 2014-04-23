@@ -97,11 +97,7 @@ class mod_skillsoft_renderer extends plugin_renderer_base {
             } else {
                 $caption  = $title;
                 $caption .= $this->pix_icon('i/info', get_string('info', 'mod_skillsoft'), 'moodle', array('class' => 'info'));
-                if ($DB->record_exists('skillsoft', array('assetid' => $id))) {
-                    $result .= html_writer::tag('li', $caption, array('class' => 'skillsoft-asset imported', 'data-asset' => $id));
-                } else {
-                    $result .= html_writer::tag('li', $caption, array('class' => 'skillsoft-asset', 'data-asset' => $id));
-                }
+                $result .= html_writer::tag('li', $caption, array('class' => 'skillsoft-asset', 'data-asset' => $id));
             }
         }
         return $result;
@@ -138,11 +134,6 @@ class mod_skillsoft_renderer extends plugin_renderer_base {
                 $result .= html_writer::start_tag('ul') . html_writer::end_tag('ul');
             }
             $result .= html_writer::end_tag('li');
-        }
-        foreach ($coursecat->get_courses() as $course) {
-            if (false !== ($assetid = $DB->get_field('skillsoft', 'assetid', array('course' => $course->id)))) {
-                $result .= html_writer::tag('li', $course->fullname, array('class' => 'imported skillsoft-asset', 'data-asset' => $assetid));
-            }
         }
         return $result;
     }
