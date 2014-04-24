@@ -49,7 +49,7 @@ class mod_skillsoft_catalogue_form extends moodleform {
 
         $mform->addElement('html', '<p>'.get_string('bulk_instructions', 'mod_skillsoft').'</p>');
         $mform->addElement('html', '<table id="skillsoft-catalogue" width="100%">');
-        $mform->addElement('html', '<tr><th class="catalogue">'.get_string('catalogue', 'mod_skillsoft').'<a class="expand-all">'.get_string('expand_all', 'mod_skillsoft').'</a><a class="download" href="catalogue_download.php">'.get_string('download').'</a></th>');
+        $mform->addElement('html', '<tr><th class="catalogue">'.get_string('catalogue', 'mod_skillsoft').'<a class="download" href="catalogue_download.php">'.get_string('download').'</a></th>');
         $mform->addElement('html', '<th class="categories">Totara<a class="expand-all">'.get_string('expand_all', 'mod_skillsoft').'</a></th></tr>');
         $mform->addElement('html', '<tr><td width="50%" class="catalogue">');
         $mform->addElement('html', '<div><ul>');

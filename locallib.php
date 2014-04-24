@@ -1589,45 +1589,59 @@ function skillsoft_get_asset_metadata($asset) {
 }
 
 function skillsoft_import_asset($asset, $category, $topics) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/local/content/lib.php');
 
     $metadata = skillsoft_get_asset_metadata($asset);
     $properties = array();
     for ($i = 0; $i < $metadata->childNodes->length; $i++) {
         $child = $metadata->childNodes->item($i);
-        $properties[$child->nodeName] = $child->textContent;
+        $properties[$child->nodeName] = trim($child->textContent);
     }
-    $newcourse = new stdClass();
-    $newcourse->idnumber     = 'skillsoft_'.$asset;
-    $newcourse->fullname     = $properties['dc:title'];
-    $newcourse->category     =  $category;
-    $newcourse->format       = 'singleactivity';
-    $newcourse->activitytype = 'skillsoft';
-    $course = create_course($newcourse);
+    do {
+        $shortname = $properties['dc:title'];
+        if (!empty($suffix)) {
+            $shortname .= " ($suffix)";
+            $suffix++;
+        } else {
+            $suffix = 1;
+        }
+        if (!$DB->record_exists('course', array('shortname' => $shortname))) {
+            break;
+        }
+    } while(1);
 
-    $skillsoft = new stdClass();
-    $skillsoft->course = $course->id;
-    $skillsoft->assetid = $asset;
-    $skillsoft->name = $properties['dc:title'];
-    $skillsoft->audience  = $properties['olsa:audience'];
-    $skillsoft->prereq    = $properties['olsa:prerequisites'];
-    $skillsoft->duration  = $properties['olsa:duration'];
-    $skillsoft->language  = $properties['dc:language'];
-    $skillsoft->launch    = $properties['olsa:launchurl'];
-    $skillsoft->modulename = 'skillsoft';
-    $skillsoft->section = 0; // This is the section number in the course. Not the section id in the database.
-    $skillsoft->course = $course->id;
-    $skillsoft->groupmode = 0;
-    $skillsoft->groupingid = 0;
-    $skillsoft->groupmembersonly = 0;
-    $skillsoft->visible = 1;
-    $skillsoft->cmidnumber = '';
-    $skillsoft->introeditor = array(
+    $type = local_content_get_type('skillsoft', 0);
+
+    $newcourse = new stdClass();
+    $newcourse->assetid         = $asset;
+    $newcourse->audience        = array(
+        'text'   => $properties['olsa:audience'],
+        'format' => 1
+    );
+    $newcourse->coursecategory  = $category;
+    $newcourse->coursefullname  = $properties['dc:title'];
+    $newcourse->courseid        = 0;
+    $newcourse->courseshortname = $shortname;
+    $newcourse->duration        = $properties['olsa:duration'];
+    $newcourse->introeditor     = array(
         'text' => $properties['dc:description'],
         'format' => 1,
-        'itemid' => 0 // This gets populated on a form, dig into how
     );
-    create_module($skillsoft);
+    $newcourse->launch          = $properties['olsa:launchurl'];
+    $newcourse->prereq          = array(
+        'text' => $properties['olsa:prerequisites'],
+        'format' => 1
+    );
+    $newcourse->shortsummary    = $properties['dc:description'];
+    $newcourse->summary_editor  = array(
+        'text' => $properties['dc:description'],
+        'format' => 1,
+        'itemid' => file_get_unused_draft_itemid()
+    );
+    $type->form_save_editdetails($newcourse, null);
 
-    tool_topics_save_course_topics($topics, $course->id);
+    tool_topics_save_course_topics($topics, $type->courseid);
 }
 

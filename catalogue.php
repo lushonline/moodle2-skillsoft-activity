@@ -45,10 +45,14 @@ $mform = new mod_skillsoft_catalogue_form();
 
 echo $OUTPUT->header();
 if ($data = $mform->get_data()) {
+    // Keep processing even if we detect the user has navigated away
+    ignore_user_abort(true);
+
     $asset_categories = optional_param_array('asset_category', array(), PARAM_INT);
     $asset_topics = optional_param_array('asset_topics', array(), PARAM_SEQUENCE);
     foreach ($asset_categories as $asset => $category) {
         set_time_limit(30);
+        echo html_writer::tag('div', 'Importing asset ' . $asset);
         $topics = $asset_topics[$asset];
         if ($topics) {
             $topics = explode(',', $topics);
@@ -57,6 +61,7 @@ if ($data = $mform->get_data()) {
         }
         skillsoft_import_asset($asset, $category, $topics);
     }
+    echo $OUTPUT->single_button('/mod/skillsoft/catalogue.php', get_string('ok'));
 } else {
     echo $mform->render();
 }
