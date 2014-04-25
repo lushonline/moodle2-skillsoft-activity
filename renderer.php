@@ -34,6 +34,9 @@ class mod_skillsoft_renderer extends plugin_renderer_base {
     public function render_catalogue_items($groups, $recurse = 0) {
 
         $doc = skillsoft_full_course_listing_document();
+        if (empty($doc)) {
+            return html_writer::tag('div', get_string('error:nocatalogue', 'mod_skillsoft'));
+        }
         $xpath = new DOMXPath($doc);
 
         // Arguably the catalogue pruning should happen at import time

@@ -358,3 +358,4 @@ $string['olsa:duration'] = 'Duration';
 $string['dc:description'] = 'Description';
 $string['olsa:prerequisites'] = 'Prerequisites';
 
+$string['error:nocatalogue'] = 'Error: Catalogue has not been downloaded yet';
