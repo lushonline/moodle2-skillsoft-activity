@@ -60,9 +60,11 @@
     background:transparent url([[pix:core|i/dragdrop]]) no-repeat 3px 7px;
 }
 
-#skillsoft-catalogue li.skillsoft-group img.info {
+#skillsoft-catalogue li.skillsoft-group img.info,
+#skillsoft-group li.skillsoft-asset img.info {
     cursor:pointer;
     position:relative;
+    margin-left:5px;
     margin-right:5px;
     margin-bottom:-3px;
 }
