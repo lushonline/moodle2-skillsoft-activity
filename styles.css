@@ -61,7 +61,7 @@
 }
 
 #skillsoft-catalogue li.skillsoft-group img.info,
-#skillsoft-group li.skillsoft-asset img.info {
+#skillsoft-selected li.skillsoft-asset img.info {
     cursor:pointer;
     position:relative;
     margin-left:5px;
