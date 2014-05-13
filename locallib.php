@@ -168,7 +168,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		}
 		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
 		
-		$options = "'width=800,height=600'";
+		$options = "'".$CFG->skillsoft_aiccwindowsettings."'";
 
 
 		/*
