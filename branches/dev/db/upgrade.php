@@ -143,9 +143,32 @@ function xmldb_skillsoft_upgrade($oldversion) {
     	$result = true;
     }
     
-if ($result && $oldversion < 2014051300) {
+	if ($result && $oldversion < 2014051300) {
     	upgrade_mod_savepoint(true, 2014051300, 'skillsoft');
     	$result = true;
+    }
+    
+    if ($result && $oldversion < 2014051301) {
+     	// Define field aiccwindowsettings to be added to skillsoft.
+        $table = new xmldb_table('skillsoft');
+        $field = new xmldb_field('aiccwindowsettings', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field aiccwindowsettings.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    	$skillsofts = $DB->get_recordset('skillsoft');
+        foreach ($skillsofts as $skillsoft) {
+                $skillsoft->aiccwindowsettings = $CFG->skillsoft_aiccwindowsettings;
+                $skillsoft->timemodified = time();
+            $DB->update_record('skillsoft', $skillsoft);
+        }
+        
+        
+        // Skillsoft savepoint reached.
+        upgrade_mod_savepoint(true, 2014051301, 'skillsoft');
+        $result = true;
     }
     
 	return $result;
