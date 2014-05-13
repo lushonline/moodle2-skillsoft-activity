@@ -14,7 +14,7 @@ These reports provide access via the Moodle Admin UI to:
 ==Installation==
 *NOTE: You must be running Moodle 2.3 or later*
 
-Download the [http://code.google.com/p/moodle2-skillsoft-activity/downloads/detail?name=moodle2-skillsoft-activity-diagnosticreports-20130531.zip&can=2&q= Report ZIP]
+Download the [https://drive.google.com/file/d/0BzBQXPp-iKI9X2tHbEhYcmxKRzg/edit?usp=sharing Report ZIP]
 
 Extract to the report folder under the root of your Moodle install.
 
