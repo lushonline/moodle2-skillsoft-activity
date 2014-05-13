@@ -41,11 +41,14 @@ class mod_skillsoft_catalogue_form extends moodleform {
             'moodle-mod_skillsoft-catalogue',
             'M.mod_skillsoft.init_catalogue',
             array(array(
-                'topics' => $tooltopicsrenderer->topics_classify_tree(tool_topics_get_topics())
+                'topics' => $tooltopicsrenderer->tree_node_classify_tree(tool_topics_get_topics())
             )));
-        $PAGE->requires->yui_module(
-            'moodle-tool_topics-tree',
-            'M.tool_topics.init_tree');
+        $config = array(
+            'tree_table' => 'table.topics-tree',
+            'classify_tree_table' => 'table.topics-tree-classify',
+            'node_prefix' => 'topic-',
+        );
+        $PAGE->requires->yui_module('moodle-local_agora-tree', 'M.agora_tree.init_tree', array($config));
 
         $mform->addElement('html', '<p>'.get_string('bulk_instructions', 'mod_skillsoft').'</p>');
         $mform->addElement('html', '<table id="skillsoft-catalogue" width="100%">');
