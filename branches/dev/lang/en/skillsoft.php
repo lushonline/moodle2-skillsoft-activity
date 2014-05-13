@@ -123,8 +123,14 @@ $string['skillsoft_resetcustomreportcrontaskdesc'] = 'When using "Track to OLSA 
 $string['skillsoft_usesso'] = 'Use OLSA SSO';
 $string['skillsoft_usessodesc'] = 'Use the OLSA Web Services SSO function, this requires one of the Track to OLSA modes. If unchecked all launches uses the AICC launch process';
 
+//May 2013
 $string['skillsoft_strictaiccstudentid'] = 'Enforce Strict AICC student_id format';
 $string['skillsoft_strictaiccstudentiddesc'] = 'When enabled the AICC handler enforces that the student_id meets the AICC 2.2 requirements which only allows [A-Za-z0-9\-_:]. If the Moodle/Skillsoft User Identifier is set to use the Username and this is an email address then the AICC code will throw an exception.';
+
+//May 2014
+$string['skillsoft_aiccwindowsettings'] = 'Default window settings for AICC launches';
+$string['skillsoft_aiccwindowsettingsdesc'] = 'The settings to use for the popup window for AICC launches for example width=800,height=600';
+
 
 //mod_form.php
 $string['skillsoft_assetid'] = 'Asset ID';
