@@ -168,8 +168,8 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		}
 		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
 		
-		$options = "'".$CFG->skillsoft_aiccwindowsettings."'";
-
+		//$options = "'".$CFG->skillsoft_aiccwindowsettings."'";
+		$options = "'".$skillsoft->aiccwindowsettings."'";
 
 		/*
 	 	* TODO: WE NEED LOGIC HERE TO HANDLE ADDING A NEW ATTEMPT WHEN USING TRACK TO LMS
