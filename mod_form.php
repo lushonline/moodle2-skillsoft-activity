@@ -146,7 +146,13 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 		//$mform->setHelpButton('mastery',array('mastery', get_string('skillsoft_mastery', 'skillsoft'), 'skillsoft'));
 		$mform->addHelpButton('mastery', 'skillsoft_mastery', 'skillsoft');
 
-
+		//2014051301
+		$mform->addElement('text', 'aiccwindowsettings', get_string('skillsoft_aiccwindowsettingsform','skillsoft'), array('size' => '100'));
+		$mform->setType('aiccwindowsettings', PARAM_TEXT);
+		$mform->setDefault('aiccwindowsettings', $CFG->skillsoft_aiccwindowsettings);
+		$mform->addHelpButton('aiccwindowsettings', 'skillsoft_aiccwindowsettingsform', 'skillsoft');
+		
+		
 		//Time modified
 		$mform->addElement('hidden', 'timemodified');
 		$mform->setType('timemodified', PARAM_INT);
