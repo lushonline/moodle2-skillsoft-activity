@@ -201,6 +201,10 @@ $string['skillsoft_duration'] = 'Duration (minutes)';
 $string['skillsoft_duration_help'] = '<p>Enter the duration for the Skillsoft Asset, in minutes, optionally you can use the "Retrieve Metadata" button to automatically complete this information from the OLSA server.</p>';
 $string['skillsoft_assettype'] = 'Asset Type';
 
+$string['skillsoft_aiccwindowsettingsform'] = 'AICC Window Settings';
+$string['skillsoft_aiccwindowsettingsform_help'] = '<p>Specify the options for the AICC popup window</p>';
+
+
 //view.php
 $string['skillsoft_enter'] = 'Launch';
 $string['skillsoft_viewreport'] = 'View My Report';
