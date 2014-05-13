@@ -103,8 +103,17 @@ This setting allows you to rest the process. After the first CRON run resubmits 
 ==Enforce Strict AICC student_id format==
 v2013051400+
 
-The module implents the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
+The module implements the AICC 2.2 standard for the student_id value, this means that valid values are only {{{[A-Za-z0-9\-_:]}}}.
 
 When using the Moodle Username as the identifier this can cause issues if the Moodle username is for example an email address as the @ symbol and . are not allowed by the AICC 2.2 standard.
 
 When disabled the strict checking on the student_id is disabled.
+
+==Default window settings for AICC launches==
+v2014051300+
+
+This setting allows the admin to specify the windows settings used for the AICC "popup" window.
+
+Default is width=800,height=600
+
+For information on the options see https://developer.mozilla.org/en-US/docs/Web/API/Window.open and the strWindowFeatures information.
