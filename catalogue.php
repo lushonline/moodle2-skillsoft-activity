@@ -49,20 +49,22 @@ if ($data = $mform->get_data()) {
     ignore_user_abort(true);
 
     $asset_categories = optional_param_array('asset_category', array(), PARAM_INT);
-    $asset_topics = optional_param_array('asset_topics', array(), PARAM_SEQUENCE);
+    $asset_classification = optional_param_array('asset_classification', array(), PARAM_TAGLIST);
     foreach ($asset_categories as $asset => $category) {
         set_time_limit(30);
         echo html_writer::tag('div', 'Importing asset ' . $asset);
-        $topics = $asset_topics[$asset];
-        if ($topics) {
-            $topics = explode(',', $topics);
+        $classification = $asset_classification[$asset];
+        if ($classification) {
+            $classification = explode(',', $classification);
         } else {
-            $topics = array();
+            $classification = array();
         }
-        skillsoft_import_asset($asset, $category, $topics);
+        skillsoft_import_asset($asset, $category, $classification);
     }
     echo $OUTPUT->single_button('/mod/skillsoft/catalogue.php', get_string('ok'));
 } else {
-    echo $mform->render();
+    $mform->display();
+    $classifyform = new mod_skillsoft_catalogue_classify_form();
+    echo html_writer::tag('div', $classifyform->render(), array('id' => 'classify-form'));
 }
 echo $OUTPUT->footer();

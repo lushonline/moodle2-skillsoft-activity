@@ -6,13 +6,15 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
     Y.extend(CATALOGUE, Y.Base, {
         dragDelegate: null,
         skillsoftAssetInfoPanel: null,
-        topicsPickerPanel: null,
-        topicsFor: null,
+        classificationPickerPanel: null,
+        classificationFor: null,
         initializer : function(config) {
             Y.delegate('click', this.nodeClicked, '#skillsoft-catalogue', 'li.skillsoft-group a', this);
             Y.delegate('click', this.nodeClicked, '#skillsoft-catalogue', 'li.category a', this);
             Y.delegate('click', this.expandAll, '#skillsoft-catalogue', 'a.expand-all', this);
-            Y.delegate('click', this.pickTopics, '#skillsoft-catalogue', 'ul.topics a', this);
+            Y.delegate('click', this.pickClassification, '#skillsoft-catalogue', 'ul.classification a', this);
+            Y.all('a.classify-defaults').on('click', this.pickDefaultClassification, this);
+            Y.delegate('click', this.pickClassification, '#skillsoft-catalogue', 'img.settings', this);
             Y.delegate('click', this.deleteNode, '#skillsoft-catalogue', 'img.delete', this);
             Y.delegate('click', this.showAssetInfo, '#skillsoft-catalogue', 'img.info', this);
             this.dragDelegate = new Y.DD.Delegate({
@@ -32,8 +34,9 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
                 dropTarget.on('drop:exit', this.dropExit, this);
             }, this);
             this.skillsoftAssetInfoPanel = new Y.Panel({
-                contentBox : Y.Node.create('<div id="skillsoft-asset-info-panel" />'),
-                bodyContent : '<div class="message" />',
+                contentBox: Y.Node.create('<div id="skillsoft-asset-info-panel" />'),
+                headerContent: 'Asset Info',
+                bodyContent: '<div class="message" />',
                 width: 600,
                 height: 400,
                 zIndex: 10,
@@ -43,62 +46,72 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
                 visible: false,
             });
             Y.one('#skillsoft-asset-info-panel div.yui3-widget-bd').setStyle('overflow', 'auto');
-            this.topicsPickerPanel = new Y.Panel({
-                contentBox : Y.Node.create('<div id="topics-picker-panel" />'),
-                bodyContent : '<div class="message">'+config.topics+'</div>',
-                width: 600,
-                height: 400,
-                zIndex: 10,
-                centered: true,
-                modal: true,
-                render: true,
-                visible: false,
-                buttons : {
-                    footer: [
-                        {
-                            name  : 'cancel',
-                            label : 'Cancel',
-                            action: 'onCancel'
-                        },
-                        {
-                            name     : 'proceed',
-                            label    : 'OK',
-                            action   : 'onOK'
-                        }
-                    ]
-                }
-            });
-            this.topicsPickerPanel.onOK = function(e) {
-                e.preventDefault();
-                this.callback(this.userdata);
-                this.hide();
-            };
-            this.topicsPickerPanel.onCancel = function(e) {
-                e.preventDefault();
-                this.hide();
-            };
-            this.topicsPickerPanel.callback = this.onTopicsChanged;
-            this.topicsPickerPanel.userdata = this;
-            Y.one('#topics-picker-panel div.yui3-widget-bd').setStyle('overflow', 'auto');
-        },
-        onTopicsChanged: function(context) {
-            var topicList = null;
 
-            context.topicsFor.all('> li').remove(true);
-            Y.all('#topics-picker-panel input[type=checkbox]').each(function(checkbox) {
-                var match = checkbox.getAttribute('name').match(/tool_topics_topics\[(\d+)\]/);
-                if (match && checkbox.get('checked')) {
-                    var label = Y.one('#topics-picker-panel label[for='+checkbox.get('id')+']');
-                    context.topicsFor.append('<li>'+label.getHTML()+'</li>');
-                    if (topicList) {
-                        topicList += ',';
-                    } else {
-                        topicList = '';
-                    }
-                    topicList += match[1];
+            this.initClassifyPanel(config.classify);
+        },
+        // Return the currently selected classifications as a comma separated string.
+        getDialogClassifications: function() {
+            var value = null;
+
+            Y.all('#classify-form input[type=checkbox]:checked').each(function(checkbox) {
+                if (value) {
+                    value += ',';
+                } else {
+                    value = '';
                 }
+                value += checkbox.getAttribute('name');
             });
-            context.topicsFor.ancestor('li.skillsoft-asset').one('input.topic-list').setAttribute('value', topicList);
+            if (value == null) {
+                value = '';
+            }
+            return value;
+        },
+        // Set the currently selected classifications from a comma separated string.
+        setDialogClassifications: function(values) {
+            values = values.split(',');
+            var pickerPanelNode = Y.one('#'+this.classificationPickerPanel.get('id'));
+            pickerPanelNode.all('input[type=checkbox]').set('checked', false);
+            for (var i in values) {
+                var name = values[i];
+                pickerPanelNode.all('input[name="'+name+'"]').set('checked', 'checked');
+            }
+        },
+        renderClassifications: function(values, into) {
+            into.all('> li').remove(true);
+            var data = {};
+            if (values != '') {
+                values = values.split(',');
+                for (var i in values) {
+                    var value = values[i];
+                    var id = Y.one('input[name="'+value+'"]').get('id');
+                    var tab = Y.one('input[name="'+value+'"]').ancestor('div.yui3-tab-panel');
+                    var caption = Y.one('#'+tab.get('aria-labelledby'));
+                    var label = Y.one('#classify-form label[for='+id+']');
+                    if (data[caption.getHTML()] === undefined) {
+                        data[caption.getHTML()] = [];
+                    }
+                    data[caption.getHTML()].push(label.getHTML());
+                }
+            }
+            for (var classification in data) {
+                values = '';
+                for (var i = 0; i < data[classification].length; i++) {
+                    if (values != '') {
+                        values += ',';
+                    }
+                    values += data[classification][i];
+                }
+                into.append('<li>'+classification+': '+values+'</li>');
+            }
+        },
+        onClassificationChanged: function(context) {
+            var values = context.getDialogClassifications();
+
+            context.classificationFor.one('input.classify-list').setAttribute('value', values);
+            context.renderClassifications(values, context.classificationFor.one('ul.classification'));
+        },
+        onDefaultClassificationChanged: function(context) {
+            context.backupClassificationDefaults();
         },
         nodeClicked: function(e) {
             e.preventDefault();
@@ -183,10 +196,13 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
                 // This is an add
                 childNode = e.drag.get('node').cloneNode(true);
                 var asset = childNode.getAttribute('data-asset');
-                childNode.prepend('<input type="hidden" name="asset_topics['+asset+']" class="topic-list" />');
+                childNode.prepend('<input type="hidden" name="asset_classification['+asset+']" class="classify-list" />');
                 childNode.prepend('<input type="hidden" name="asset_category['+asset+']" class="category" />');
+                childNode.prepend('<img src="'+M.util.image_url('i/settings')+'" class="settings">');
                 childNode.prepend('<img src="'+M.util.image_url('t/delete')+'" class="delete">');
-                childNode.append('<ul class="topics"><a href="?pick-topics=1">Choose topics</a></ul>');
+                childNode.append('<ul class="classification"></ul>');
+                childNode.one('input.classify-list').setAttribute('value', this.defaultClassificationSelections);
+                this.renderClassifications(this.defaultClassificationSelections, childNode.one('ul.classification'));
             } else {
                 // This is a move
                 childNode = source;
@@ -212,11 +228,85 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
                 }
             }
         },
-        pickTopics: function(e) {
+        pickClassification: function(e) {
             e.preventDefault();
-            this.topicsFor = e.target.ancestor('ul');
-            this.topicsPickerPanel.show();
-        }
+            this.classificationFor = e.target.ancestor('li.skillsoft-asset');
+            this.classificationPickerPanel.callback = this.onClassificationChanged;
+            this.classificationPickerPanel.userdata = this;
+            this.setDialogClassifications(this.classificationFor.one('input.classify-list').getAttribute('value'));
+            this.classificationPickerPanel.show();
+        },
+        pickDefaultClassification: function(e) {
+            e.preventDefault();
+            this.classificationPickerPanel.callback = this.onDefaultClassificationChanged;
+            this.classificationPickerPanel.userdata = this;
+            this.setDialogClassifications(this.defaultClassificationSelections);
+            this.classificationPickerPanel.show();
+        },
+        initClassifyPanel: function(node) {
+            // First re-write the node to look good to Y.TabView
+            var src = Y.one(node);
+            var result = Y.Node.create('<div class="tabbed-panel"></div>');
+            var ul = result.appendChild('<ul></ul>');
+            var div = result.appendChild('<div></div>');
+
+            src.all('fieldset').each(function () {
+                var caption = this.one('legend').getHTML();
+                var id = this.getAttribute('id');
+                var content = this.one('div.fcontainer').getHTML();
+
+                ul.appendChild('<li><a href="#'+id+'">'+caption+'</a></li>');
+                div.appendChild('<div id="'+id+'">'+content+'</div>');
+            });
+            src.setHTML(result.getHTML());
+
+            // Next convert the node to tabs
+            var tabview = new Y.TabView({srcNode: src});
+            tabview.render();
+
+            var wrapper = Y.one('#'+tabview.get('id')).wrap('<div>');
+
+            // Now wrap it all in a panel
+            this.classificationPickerPanel = new Y.Panel({
+                headerContent: 'Classify',
+                srcNode: wrapper,
+                width: 600,
+                height: 400,
+                zIndex: 10,
+                centered: true,
+                modal: true,
+                render: true,
+                visible: false,
+                buttons : {
+                    footer: [
+                        {
+                            name  : 'cancel',
+                            label : 'Cancel',
+                            action: 'onCancel'
+                        },
+                        {
+                            name     : 'proceed',
+                            label    : 'OK',
+                            action   : 'onOK'
+                        }
+                    ]
+                }
+            });
+
+            this.classificationPickerPanel.onOK = function(e) {
+                e.preventDefault();
+                this.callback(this.userdata);
+                this.hide();
+            };
+            this.classificationPickerPanel.onCancel = function(e) {
+                e.preventDefault();
+                this.hide();
+            };
+            this.backupClassificationDefaults();
+        },
+        backupClassificationDefaults: function() {
+            this.defaultClassificationSelections = this.getDialogClassifications();
+        },
     }, {
         NAME : CatalogueNAME,
         ATTRS: {
@@ -227,5 +317,5 @@ YUI.add('moodle-mod_skillsoft-catalogue', function(Y) {
         return new CATALOGUE(config);
     };
 }, '@VERSION@', {
-    requires:['base', 'event', 'io', 'dd', 'panel']
+    requires:['base', 'event', 'io', 'dd', 'panel', 'tabview']
 });

@@ -86,3 +86,20 @@
     display: inline;
 }
 
+#skillsoft-catalogue li.skillsoft-asset ul.classification li {
+    display: none;
+}
+
+#skillsoft-catalogue li.skillsoft-asset:hover ul.classification li {
+    display: inline;
+}
+
+#classify-form .yui3-tabview-panel {
+    height: 244px;
+    overflow: auto;
+}
+
+#classify-form ul.yui3-tabview-list {
+    margin: 20px 0 0 0;
+}
+

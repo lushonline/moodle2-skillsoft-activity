@@ -350,6 +350,7 @@ $string['collapse'] = 'Collapse';
 $string['info'] = 'Information';
 $string['expand_all'] = 'Expand all';
 $string['startbulkimport'] = 'Start import';
+$string['classify_defaults'] = 'Default classification';
 
 $string['dc:identifier'] = 'Asset ID';
 $string['dc:title'] = 'Name';

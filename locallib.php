@@ -1588,11 +1588,23 @@ function skillsoft_get_asset_metadata($asset) {
     }
 }
 
-function skillsoft_import_asset($asset, $category, $topics) {
+function skillsoft_import_asset($asset, $category, $classifications) {
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/local/content/lib.php');
 
+    // Prepare the $_POST array for the later call to form_save_classify
+    // It seems I must hack this into $_POST
+    foreach ($classifications as $classification) {
+        $matches = array();
+        if (preg_match('/([^\\]]+)\\[([^\\]]+)\\]/', $classification, $matches)) {
+            $_POST[$matches[1]][$matches[2]] = 1;
+        } else {
+            print_error('badparams', 'mod_skillsoft', '', array('classifications' => $classifications, 'current' => $classification, 'matches' => $matches));
+        }
+    }
+
+    // Create the skillsoft course
     $metadata = skillsoft_get_asset_metadata($asset);
     $properties = array();
     for ($i = 0; $i < $metadata->childNodes->length; $i++) {
@@ -1640,8 +1652,10 @@ function skillsoft_import_asset($asset, $category, $topics) {
         'format' => 1,
         'itemid' => file_get_unused_draft_itemid()
     );
+    $newcourse->overviewfiles_filemanager = 0;
     $type->form_save_editdetails($newcourse, null);
 
-    tool_topics_save_course_topics($topics, $type->courseid);
+    // Now classify the imported asset.
+    $type->form_save_classify(null, null);
 }
 

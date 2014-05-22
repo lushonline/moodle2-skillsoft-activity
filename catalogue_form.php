@@ -28,6 +28,23 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+require_once($CFG->dirroot . '/local/content/types/skillsoft.php');
+
+class mod_skillsoft_catalogue_classify_form extends moodleform {
+
+    function definition() {
+        global $DB;
+
+        $mform = $this->_form;
+
+        // Not happy about doing things this way, but contstrained by local content implementation
+        $courseid = $DB->get_field('course', 'id', array('idnumber' => 'TEMPLATE_SKILLSOFT'));
+        $type = new local_content_type_skillsoft($courseid);
+        $type->form_add_elements_classify($mform);
+
+    }
+}
+
 class mod_skillsoft_catalogue_form extends moodleform {
 
     function definition() {
@@ -36,13 +53,15 @@ class mod_skillsoft_catalogue_form extends moodleform {
         $mform = $this->_form;
 
         $renderer = $PAGE->get_renderer('mod_skillsoft');
-        $tooltopicsrenderer = $PAGE->get_renderer('tool_topics');
         $PAGE->requires->yui_module(
             'moodle-mod_skillsoft-catalogue',
             'M.mod_skillsoft.init_catalogue',
             array(array(
-                'topics' => $tooltopicsrenderer->tree_node_classify_tree(tool_topics_get_topics())
+                'classify' => '#classify-form'
             )));
+        // TODO: Work out why the yui modules included above aren't working.
+        // I suspect the yui code is running before DOM structure for classifications exists,
+        // which means I'll need to refactor a bit to inline the classify data as hidden content.
         $config = array(
             'tree_table' => 'table.topics-tree',
             'classify_tree_table' => 'table.topics-tree-classify',
@@ -50,7 +69,7 @@ class mod_skillsoft_catalogue_form extends moodleform {
         );
         $PAGE->requires->yui_module('moodle-local_agora-tree', 'M.agora_tree.init_tree', array($config));
 
-        $mform->addElement('html', '<p>'.get_string('bulk_instructions', 'mod_skillsoft').'</p>');
+        $mform->addElement('html', '<p>'.get_string('bulk_instructions', 'mod_skillsoft').' <a href="#" class="classify-defaults">'.get_string('classify_defaults', 'mod_skillsoft').'</a></p>');
         $mform->addElement('html', '<table id="skillsoft-catalogue" width="100%">');
         $mform->addElement('html', '<tr><th class="catalogue">'.get_string('catalogue', 'mod_skillsoft').'<a class="download" href="catalogue_download.php">'.get_string('download').'</a></th>');
         $mform->addElement('html', '<th class="categories">Totara<a class="expand-all">'.get_string('expand_all', 'mod_skillsoft').'</a></th></tr>');
