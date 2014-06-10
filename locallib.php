@@ -1634,6 +1634,7 @@ function skillsoft_import_asset($asset, $category, $classifications) {
     );
     $newcourse->coursecategory  = $category;
     $newcourse->coursefullname  = $properties['dc:title'];
+    $newcourse->name            = $properties['dc:title'];
     $newcourse->courseid        = 0;
     $newcourse->courseshortname = $shortname;
     $newcourse->duration        = $properties['olsa:duration'];
