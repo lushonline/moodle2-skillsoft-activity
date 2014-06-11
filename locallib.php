@@ -1647,8 +1647,26 @@ function skillsoft_import_asset($asset, $category, $classifications) {
         'format' => 1
     );
     $newcourse->shortsummary    = $properties['dc:description'];
+    $summary = '';
+
+    if (!empty($properties['dc:description'])) {
+        $summary .= html_writer::tag('h3', get_string('skillsoft_summary', 'skillsoft'));
+        $summary .= $properties['dc:description'];
+    }
+    if (!empty($properties['olsa:audience'])) {
+        $summary .= html_writer::tag('h3', get_string('skillsoft_audience', 'skillsoft'));
+        $summary .= $properties['olsa:audience'];
+    }
+    if (!empty($properties['olsa:prerequisites'])) {
+        $summary .= html_writer::tag('h3', get_string('skillsoft_prereq', 'skillsoft'));
+        $summary .= $properties['olsa:prerequisites'];
+    }
+    if (!empty($properties['olsa:duration'])) {
+        $summary .= html_writer::tag('h3', get_string('skillsoft_duration', 'skillsoft'));
+        $summary .= $properties['olsa:duration'];
+    }
     $newcourse->summary_editor  = array(
-        'text' => $properties['dc:description'],
+        'text' => $summary,
         'format' => 1,
         'itemid' => file_get_unused_draft_itemid()
     );
