@@ -1595,6 +1595,7 @@ function skillsoft_import_asset($asset, $category, $classifications) {
 
     // Prepare the $_POST array for the later call to form_save_classify
     // It seems I must hack this into $_POST
+    $original_post = $_POST;
     foreach ($classifications as $classification) {
         $matches = array();
         if (preg_match('/([^\\]]+)\\[([^\\]]+)\\]/', $classification, $matches)) {
@@ -1676,5 +1677,8 @@ function skillsoft_import_asset($asset, $category, $classifications) {
 
     // Now classify the imported asset.
     $type->form_save_classify(null, null);
+
+    // Finally, restore the original $_POST values
+    $_POST = $original_post;
 }
 
