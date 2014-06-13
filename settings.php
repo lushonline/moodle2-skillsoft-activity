@@ -114,6 +114,3 @@ $settings->add(new admin_setting_configduration('skillsoft_catalogueimportfreque
     get_string('skillsoft_catalogueimportfrequency', 'skillsoft'),
     get_string('skillsoft_catalogueimportfrequencydesc', 'skillsoft'),
     4 * 7 * 86400, 7 * 86400));
-
-$ADMIN->add('courses', new admin_externalpage('skillsoftcatalogue', get_string('catalogue', 'mod_skillsoft'),
-    $CFG->wwwroot . '/mod/skillsoft/catalogue.php', 'moodle/course:create'));
