@@ -30,13 +30,13 @@ class mod_skillsoft_mod_form extends moodleform_mod {
         if (empty($this->_cm)) {
 			// Asset ID
 			$mform->addElement('text', 'assetid', get_string('skillsoft_assetid','skillsoft'));
-			$mform->setType('assetid', PARAM_TEXT);
     		$mform->addRule('assetid', null, 'required', null, 'client');
 			$mform->addRule('assetid', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 			$mform->addHelpButton('assetid', 'skillsoft_assetid', 'skillsoft');
         } else {
         	$mform->addElement('hidden', 'assetid', NULL, array('id'=>'id_assetid'));
         }
+		$mform->setType('assetid', PARAM_TEXT);
 
 		//Button to get data from OLSA
 		//pass assetid to page
@@ -155,5 +155,45 @@ class mod_skillsoft_mod_form extends moodleform_mod {
 		$this->add_action_buttons();
 	}
 
+    function add_completion_rules() {
 
+        $mform =& $this->_form;
+
+        $mform->addElement('checkbox', 'completionskillsoftenabled', get_string('completionskillsoft', 'mod_skillsoft'), get_string('trackingskillsoft', 'mod_skillsoft'));
+
+        $mform->addElement('radio', 'completionsync', '', get_string('firstcomplete', 'mod_skillsoft'), 1, array());
+        // Hiding lastattempt for now, as I don't want to purge all the code we may end up needing
+        // $mform->addElement('radio', 'completionsync', '', get_string('lastattempt', 'mod_skillsoft'), 2, array());
+        $mform->setDefault('completionsync', 1);
+        $mform->disabledif('completionsync', 'completionskillsoftenabled');
+
+        return array('completionskillsoftenabled', 'completionsync');
+    }
+
+    function completion_rule_enabled($data) {
+        return (!empty($data['completionskillsoftenabled']));
+    }
+
+    function get_data() {
+
+        $data = parent::get_data();
+        if (!$data) {
+            return $data;
+        }
+
+        if (!empty($data->completionunlocked)) {
+            if (empty($data->completionsync)) {
+                $data->completionskillsoftenabled = 0;
+            } else {
+                $data->completionskillsoftenabled = 1;
+            }
+        }
+
+        return $data;
+    }
+
+    function data_preprocessing(&$default_values) {
+        $default_values['completionskillsoftenabled'] =
+            !empty($default_values['completionsync']) ? 1 : 0;
+    }
 }

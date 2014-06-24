@@ -175,5 +175,16 @@ function xmldb_skillsoft_upgrade($oldversion) {
     	$result = true;
     }    
         
+    if ($result && $oldversion < 2015080400) {
+        $table = new xmldb_table('skillsoft');
+        $field = new xmldb_field('completionsync', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+		if (!$dbman->field_exists($table,$field)) {
+        	$dbman->add_field($table, $field);
+		}
+
+        upgrade_mod_savepoint(true, 2015080400, 'skillsoft');
+        $result = true;
+    }
+
 	return $result;
 }

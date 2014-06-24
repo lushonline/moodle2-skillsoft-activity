@@ -892,8 +892,9 @@ function skillsoft_uninstall() {
 /**
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_COMPLETION_HAS_RULES
  * @uses FEATURE_GRADE_HAS_GRADE
- * @users FEATURE_BACKUP_MOODLE2
+ * @uses FEATURE_BACKUP_MOODLE2
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
@@ -901,9 +902,42 @@ function skillsoft_supports($feature) {
 	switch($feature) {
 		case FEATURE_MOD_INTRO:               return true;
 		case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
 		case FEATURE_GRADE_HAS_GRADE:         return true;
 		case FEATURE_BACKUP_MOODLE2:          return true;
 		default: return null;
 	}
 }
 
+/**
+ * Obtains the automatic completion state for this module based on any conditions
+ * in module settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function skillsoft_get_completion_state($course,$cm,$userid,$type) {
+    global $DB;
+
+    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $skillsoftid));
+    if ($completionsync == 0) {
+        return $type;
+    }
+    $records = $DB->get_records('skillsoft_au_track', array(
+        'skillsoftid' => $cm->instance,
+        'userid' => $userid,
+        'element' => '[CORE]lesson_status',
+    ));
+    $exists = false;
+    foreach ($records as $record) {
+        if ($record->value == 'completed' || $record->value == 'passed') {
+            $exists = true;
+        } else if ($completionsync == 2) {
+            $exists = false;
+        }
+    }
+    return $exists;
+}

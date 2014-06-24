@@ -621,6 +621,8 @@ class aicchandler {
 		$id = skillsoft_setFirstScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
 		$id = skillsoft_setCurrentScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
 		$id = skillsoft_setBestScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
+
+        skillsoft_setActivityCompletionState($this->user->id, $this->skillsoft->id, $this->cmi->core->lesson_status);
 		
 	}	
 	
@@ -657,6 +659,8 @@ class aicchandler {
 			$id = skillsoft_setFirstScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
 			$id = skillsoft_setCurrentScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
 			$id = skillsoft_setBestScore($this->user->id, $this->skillsoft->id, $this->attempt, $this->cmi->core->score->raw);
+
+            skillsoft_setActivityCompletionState($this->user->id, $this->skillsoft->id, $this->cmi->core->lesson_status);
 		}
 		$response = '';
 		$response .= 'error=0'."\r\n";
@@ -711,6 +715,8 @@ class aicchandler {
 		$id = skillsoft_setCurrentScore($this->user->id, $this->skillsoft->id, $this->attempt, $reportresults->currentscore);
 		$id = skillsoft_setBestScore($this->user->id, $this->skillsoft->id, $this->attempt, $reportresults->bestscore);
 		
+        skillsoft_setActivityCompletionState($this->user->id, $this->skillsoft->id, $this->cmi->core->lesson_status);
+
 		//Need to do these last to ensure grades correctly entered
 		//Persist the data
 		$id = skillsoft_insert_track($this->user->id, $this->skillsoft->id, $this->attempt, '[CORE]lesson_status', $this->cmi->core->lesson_status);

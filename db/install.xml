@@ -18,7 +18,8 @@
         <FIELD NAME="completable" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Indicates if the asset can return a score and be completed. SkillSoft assets sucha s books and passive content, never return these states to the LMS" PREVIOUS="duration" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completable" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="aiccwindowsettings"/>
-        <FIELD NAME="aiccwindowsettings" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The settings for the popup window for AICC launch" PREVIOUS="timecreated"/>
+        <FIELD NAME="aiccwindowsettings" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The settings for the popup window for AICC launch" PREVIOUS="timecreated" NEXT="completionsync"/>
+        <FIELD NAME="completionsync" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="aiccwindowsettings"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

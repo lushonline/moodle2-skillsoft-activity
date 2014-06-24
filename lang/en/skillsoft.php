@@ -360,3 +360,10 @@ $string['dc:description'] = 'Description';
 $string['olsa:prerequisites'] = 'Prerequisites';
 
 $string['error:nocatalogue'] = 'Error: Catalogue has not been downloaded yet';
+
+// Custom completion
+$string['completionskillsoft'] = 'Skillsoft Completion';
+$string['trackingskillsoft'] = 'Track remote completion status';
+$string['firstcomplete'] = 'Use first pass';
+$string['lastattempt'] = 'Use last attempt';
+

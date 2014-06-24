@@ -199,48 +199,49 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
  * @return bool true if succesful
  */
 function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
-	global $DB;
-	$id = null;
+    global $DB;
+    $id = null;
 
-	//Work to support multiple attempts
-	//$attempt = 1;
+    //Work to support multiple attempts
+    //$attempt = 1;
 
-	/* 13-SEP-2013
-	 * Added error trap to convert $value=NULL to null string ""
-	 */
-	if ($value===NULL) {
-		$value = "";
-	}
-	
-	$params = array($userid,$skillsoftid,$attempt,$element);
-	if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
-	
-		$track->value = $value;
-		$track->timemodified = time();
-		$id = $DB->update_record('skillsoft_au_track',$track);
-	} else {
-		$track = new stdClass();
-		$track->userid = $userid;
-		$track->skillsoftid = $skillsoftid;
-		$track->attempt = $attempt;
-		$track->element = $element;
-		//$track->value = addslashes($value);
-		$track->value = $value;
-		$track->timemodified = time();
-		$id = $DB->insert_record('skillsoft_au_track',$track);
-	}
+    /* 13-SEP-2013
+     * Added error trap to convert $value=NULL to null string ""
+     */
+    if ($value===NULL) {
+        $value = "";
+    }
 
-	//if we have a best score OR we have passed/completed status then update the gradebook
-	if ( strstr($element, ']bestscore') ||
-	(strstr($element,']lesson_status') && (substr($track->value,0,1) == 'c' || substr($track->value,0,1) == 'p'))
-	) {
-		$conditions = array('id'=> $skillsoftid);
-		$skillsoft = $DB->get_record('skillsoft', $conditions);
-		include_once('lib.php');
-		skillsoft_update_grades($skillsoft, $userid);
-	}
-	//print_object($track);
-	return $id;
+    $params = array($userid,$skillsoftid,$attempt,$element);
+    if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
+
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = $DB->update_record('skillsoft_au_track',$track);
+    } else {
+        $track = new stdClass();
+        $track->userid = $userid;
+        $track->skillsoftid = $skillsoftid;
+        $track->attempt = $attempt;
+        $track->element = $element;
+        //$track->value = addslashes($value);
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = $DB->insert_record('skillsoft_au_track',$track);
+    }
+
+    //if we have a best score OR we have passed/completed status then update the gradebook
+    if ( strstr($element, ']bestscore') ||
+        (strstr($element,']lesson_status') && (substr($track->value,0,1) == 'c' || substr($track->value,0,1) == 'p'))
+    ) {
+        $conditions = array('id'=> $skillsoftid);
+        $skillsoft = $DB->get_record('skillsoft', $conditions);
+        include_once('lib.php');
+        skillsoft_update_grades($skillsoft, $userid);
+    }
+
+    //print_object($track);
+    return $id;
 }
 
 /**
@@ -308,6 +309,35 @@ function skillsoft_setCompletedDate($userid,$skillsoftid,$attempt,$time) {
 	return $id;
 }
 
+/**
+ * setActivityCompletionState
+ *
+ * If skillsoft completion is enabled, update the activity completion state
+ *
+ * @param $userid
+ * @param $skillsoftid
+ * @param $state
+ */
+function skillsoft_setActivityCompletionState($userid,$skillsoftid,$state) {
+    global $CFG, $DB;
+
+    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $skillsoftid));
+    $courseid = $DB->get_field('skillsoft', 'course', array('id' => $skillsoftid));
+    if ($completionsync) {
+        require_once($CFG->libdir.'/completionlib.php');
+        $completion = new completion_info(get_course($courseid));
+        $cm = get_coursemodule_from_instance('skillsoft', $skillsoftid, $courseid);
+        if ((substr($state,0,1) == 'c' || substr($state,0,1) == 'p')) {
+            // Mark course as completed
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+
+        } else if ($completionsync == 2) {
+            // Mark course as incomplete
+            $completion->update_state($cm, COMPLETION_INCOMPLETE);
+        }
+        $completion->invalidatecache($courseid, $userid, true);
+    }
+}
 
 /**
  * setAccessCount
