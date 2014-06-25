@@ -53,6 +53,8 @@ if ($data = $mform->get_data()) {
     foreach ($asset_categories as $asset => $category) {
         set_time_limit(30);
         echo html_writer::tag('div', 'Importing asset ' . $asset);
+        ob_flush();
+        flush();
         $classification = $asset_classification[$asset];
         if ($classification) {
             $classification = explode(',', $classification);

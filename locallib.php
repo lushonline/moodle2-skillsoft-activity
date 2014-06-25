@@ -1653,6 +1653,7 @@ function skillsoft_import_asset($asset, $category, $classifications) {
         if (!$DB->record_exists('course', array('shortname' => $shortname))) {
             break;
         }
+
     } while(1);
 
     $type = local_content_get_type('skillsoft', 0);
@@ -1707,6 +1708,19 @@ function skillsoft_import_asset($asset, $category, $classifications) {
 
     // Now classify the imported asset.
     $type->form_save_classify(null, null);
+
+    // And set the audiences
+    $templateid = $DB->get_field('course', 'id', array('idnumber' => $type->get_template_idnumber()));
+
+    $enroled_audiences = totara_cohort_get_course_cohorts($templateid, null, 'c. id');
+    foreach ($enroled_audiences as $audience) {
+        totara_cohort_add_association($audience->id, $type->courseid, COHORT_ASSN_ITEMTYPE_COURSE, COHORT_ASSN_VALUE_ENROLLED);
+    }
+
+    $visible_audiences = totara_cohort_get_visible_learning($templateid);
+    foreach ($visible_audiences as $audience) {
+        totara_cohort_add_association($audience->id, $type->courseid, COHORT_ASSN_ITEMTYPE_COURSE, COHORT_ASSN_VALUE_VISIBLE);
+    }
 
     // Finally, restore the original $_POST values
     $_POST = $original_post;
