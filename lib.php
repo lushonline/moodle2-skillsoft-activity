@@ -790,6 +790,13 @@ function skillsoft_cron () {
                     skillsoft_queue_full_course_listing_download();
                 }
         }
+    } else {
+        if (time() > $CFG->skillsoft_catalogueimportfrequency + skillsoft_asset_metadata_timestamp()) {
+            if (!skillsoft_full_course_listing_download_running()
+                && !skillsoft_bulk_course_metadata_download_running()) {
+                    // The call to skillsoft_bulk_course_metadata_download_running will do the work.
+                }
+        }
     }
 	return true;
 }
