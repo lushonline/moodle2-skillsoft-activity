@@ -75,6 +75,9 @@ function skillsoft_add_instance($skillsoft) {
 		}
 	}
 
+    $DB->set_field('course_modules', 'learningtime', ($skillsoft->duration * 60),
+        array('id' => $skillsoft->coursemodule));
+
 	return $result;
 }
 
@@ -96,6 +99,9 @@ function skillsoft_update_instance($skillsoft) {
 	if ($result = $DB->update_record('skillsoft', $skillsoft)) {
 		skillsoft_grade_item_update($skillsoft,NULL);
 	}
+
+    $DB->set_field('course_modules', 'learningtime', ($skillsoft->duration * 60),
+        array('id' => $skillsoft->coursemodule));
 
 	return $result;
 }
