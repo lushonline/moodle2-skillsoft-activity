@@ -929,7 +929,7 @@ function skillsoft_supports($feature) {
 function skillsoft_get_completion_state($course,$cm,$userid,$type) {
     global $DB;
 
-    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $skillsoftid));
+    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $cm->instance));
     if ($completionsync == 0) {
         return $type;
     }
