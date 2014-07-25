@@ -948,3 +948,24 @@ function skillsoft_get_completion_state($course,$cm,$userid,$type) {
     }
     return $exists;
 }
+
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ *
+ * See {@link get_array_of_activities()} in course/lib.php
+ *
+ * @param stdClass $coursemodule
+ * @return cached_cm_info info
+ */
+function skillsoft_get_coursemodule_info($coursemodule) {
+    global $CFG;
+
+    $fullurl = "$CFG->wwwroot/mod/skillsoft/launch.php?id=$coursemodule->id";
+    $wh = "width=800,height=600";
+
+    $info = new cached_cm_info();
+    $info->onclick = "window.open('$fullurl', 'courseWindow', '$wh'); return false;";
+    return $info;
+}

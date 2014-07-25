@@ -119,6 +119,45 @@ function skillsoft_check_sessionid($sessionid) {
 }
 
 /**
+ * Given a skillsoft object this will return the lauch url
+ *
+ * @param stdClass $skillsoft
+ * @return string
+ */
+function skillsoft_launch_url($skillsoft, $user) {
+	global $CFG;
+	if (stripos($skillsoft->launch,'?') !== false) {
+		$connector = '&';
+	} else {
+		$connector = '?';
+	}
+
+	$element = "";
+
+	/* We need logic here that if SSO url defined we use this */
+	if (!$CFG->skillsoft_usesso && strtolower($skillsoft->assetid) != 'sso') {
+		//skillsoft_ssourl is not defined so do AICC
+		$newkey = skillsoft_create_sessionid($user->id, $skillsoft->id);
+
+		$launcher = $skillsoft->launch;
+		//Section 508 Enhancement - add x508 value of $user->screenreader
+		if (isset($user->screenreader) && $user->screenreader == 1) {
+			$launcher .= $connector.'x508=1';
+		}
+		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
+
+		/*
+	 	* TODO: WE NEED LOGIC HERE TO HANDLE ADDING A NEW ATTEMPT WHEN USING TRACK TO LMS
+	 	*/
+	} else {
+		//we have skillsoft_ssourl so we replace {0} with $skillsoft->id
+		//$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->assetid);
+		$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->id);
+	}
+    return $launcher;
+}
+
+/**
  * Given an skillsoft object this will return
  * the HTML snippet for displaying the Launch Button
  * or output the HTML based on value of $return
