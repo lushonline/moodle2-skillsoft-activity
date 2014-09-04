@@ -21,7 +21,7 @@
  * All the aicc handler functions
  *
  * @package   mod-skillsoft
- * @author 	  Martin Holden
+ * @author    $Author$
  * @copyright 2009-2013 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
