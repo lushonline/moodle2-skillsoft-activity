@@ -166,15 +166,17 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 					$element.= "<div id=\"restart\" name=\"restart\"><input type=\"checkbox\" name=\"startover\" id=\"startover\" value=\"".($lastsession->attempt+1)."\" >".get_string('skillsoft_newattempt','skillsoft')."<br/></div>";
 				}
 			}
+		} else {
+			$element.= "<input type=\"hidden\" name=\"attempt\" id=\"attempt\" value=\"\" >";
 		}
 	} else {
 		//we have skillsoft_ssourl so we replace {0} with $skillsoft->id
 		//$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->assetid);
 		$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->id);
 		$options = "''";
+		$element.= "<input type=\"hidden\" name=\"attempt\" id=\"attempt\" value=\"\" >";
 	}
 	//Should look at making this call a JavaScript, that we include in the page
-	$element.= "<input type=\"hidden\" name=\"attempt\" id=\"attempt\" value=\"\" >";
 	$element.= "<input type=\"button\" value=\"". get_string('skillsoft_enter','skillsoft') ."\" onclick=\"return openAICCWindow('$launcher', 'courseWindow',$options, false);\" />";
 
 	if ($return) {
