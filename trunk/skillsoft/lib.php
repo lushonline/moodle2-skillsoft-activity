@@ -1,34 +1,10 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
-/**
- * Library of interface functions and constants for module skillsoft
- *
- * All the core Moodle functions, neeeded to allow the module to work
- * integrated in Moodle should be placed here.
- * All the skillsoft specific functions, needed to implement all the module
- * logic, should go to locallib.php. This will help to save some memory when
- * Moodle is performing actions across all modules.
- *
- * @package   mod-skillsoft
- * @author    Martin Holden
- * @copyright 2009-2011 Martin Holden
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+/*
+ * @package		mod-skillsoft
+ * @author		$Author$
+ * @version		SVN: $Header$
+ * @copyright	2009-2014 Martin Holden
+ * @license		http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -166,7 +142,9 @@ function skillsoft_delete_instance($id) {
  */
 function skillsoft_get_user_grades($skillsoft, $userid=0) {
 	global $CFG, $DB;
-	require_once('locallib.php');
+	
+	require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
+	//require_once('locallib.php');
 
 	$grades = array();
 
@@ -327,8 +305,10 @@ function skillsoft_grade_item_delete($skillsoft) {
  * @todo Finish documenting this function
  */
 function skillsoft_user_outline($course, $user, $mod, $skillsoft) {
-	global $OUTPUT;
-	require_once('locallib.php');
+	global $CFG, $DB, $OUTPUT;
+	
+	require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
+	//require_once('locallib.php');
 
 	if (empty($attempt)) {
 		$attempt = skillsoft_get_last_attempt($skillsoft->id,$user->id);
@@ -366,8 +346,10 @@ function skillsoft_user_outline($course, $user, $mod, $skillsoft) {
  * @todo Finish documenting this function
  */
 function skillsoft_user_complete($course, $user, $mod, $skillsoft) {
-	global $OUTPUT;
-	require_once('locallib.php');
+	global $CFG, $DB, $OUTPUT;
+	
+	require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
+	//require_once('locallib.php');
 
 	$table = new html_table();
 	$table->head = array(
@@ -389,6 +371,8 @@ function skillsoft_user_complete($course, $user, $mod, $skillsoft) {
 	$row = array();
 	$score = '&nbsp;';
 
+	
+	
 	$maxattempts = skillsoft_get_last_attempt($skillsoft->id,$user->id);
 	if ($maxattempts == 0) {
 		$maxattempts = 1;
@@ -397,7 +381,9 @@ function skillsoft_user_complete($course, $user, $mod, $skillsoft) {
 		$row = array();
 		$score = '&nbsp;';
 		if ($trackdata = skillsoft_get_tracks($skillsoft->id,$user->id,$a)) {
-			$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$skillsoft->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
+			
+			//FIXME: Get CM reference
+			$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$mod->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
 			$row[] = isset($trackdata->{'[SUMMARY]firstaccess'}) ? userdate($trackdata->{'[SUMMARY]firstaccess'}):'';
 			$row[] = isset($trackdata->{'[SUMMARY]lastaccess'}) ? userdate($trackdata->{'[SUMMARY]lastaccess'}):'';
 			if ($skillsoft->completable == true) {
@@ -460,7 +446,7 @@ function skillsoft_print_recent_activity($course, $isteacher, $timestart) {
 		if ($cm = get_coursemodule_from_instance('skillsoft', $record->id, $course->id)) {
 			$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 			if (has_capability('mod/skillsoft:viewreport', $context)) {
-				$name = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$id)).'">'.$record->name.'</a>'.'&nbsp;';
+				$name = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id)).'">'.$record->name.'</a>'.'&nbsp;';
 				if ($record->countlaunches > 1) {
 					$name .= " ($record->countlaunches)";
 				}
@@ -621,7 +607,9 @@ function skillsoft_delete_sessions($time) {
 }
 
 function skillsoft_ondemandcommunications() {
-	require_once('olsalib.php');
+	global $CFG;
+	require_once($CFG->dirroot.'/mod/skillsoft/olsalib.php');
+	//require_once('olsalib.php');
 
 	mtrace(get_string('skillsoft_odcinit','skillsoft'));
 	$initresponse = OC_InitializeTrackingData();
@@ -671,7 +659,9 @@ function skillsoft_ondemandcommunications() {
 
 
 function skillsoft_customreport($includetoday=false) {
-	require_once('olsalib.php');
+	global $CFG;
+	require_once($CFG->dirroot.'/mod/skillsoft/olsalib.php');
+	//require_once('olsalib.php');
 
 
 	//Constants for custom report preocessing
@@ -761,7 +751,9 @@ function skillsoft_customreport($includetoday=false) {
  **/
 function skillsoft_cron () {
 	global $CFG, $DB;
-	require_once('locallib.php');
+	
+	require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
+	//require_once('locallib.php');
 
 	if (!isset($CFG->skillsoft_sessionpurge)) {
 		set_config('skillsoft_sessionpurge', 8);

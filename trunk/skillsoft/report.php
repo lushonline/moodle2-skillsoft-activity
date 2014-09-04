@@ -1,57 +1,49 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
-/**
- * This is a one-line short description of the file
- *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package   mod-skillsoft
- * @author    Martin Holden
- * @copyright 2009-2011 Martin Holden
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+/*
+ * @package		mod-skillsoft
+ * @author		$Author$
+ * @version		SVN: $Header$
+ * @copyright	2009-2014 Martin Holden
+ * @license		http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once('../../config.php');
-require_once('locallib.php');
+require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
 
 $id = required_param('id', PARAM_INT);    // skillsoft ID, or
 $user = optional_param('user', '', PARAM_BOOL);  // User report
 $attempt = optional_param('attempt', '', PARAM_INT);  // attempt number
-$url = new moodle_url('/mod/skillsoft/report.php',array('id'=>$id));
+
 
 if (!empty($id)) {
-	if (! $skillsoft = $DB->get_record('skillsoft', array('id'=>$id))) {
-		print_error('Course module is incorrect');
-	}
-	if (! $course = $DB->get_record('course', array('id'=> $skillsoft->course))) {
-		print_error('Course is misconfigured');
-	}
-	if (! $cm = get_coursemodule_from_instance('skillsoft', $skillsoft->id, $course->id)) {
-		print_error('Course Module ID was incorrect');
-	}
+	if (! $cm = get_coursemodule_from_id('skillsoft', $id)) {
+        print_error('Course Module ID was incorrect');
+    }
+    if (! $course = $DB->get_record('course', array('id'=> $cm->course))) {
+        print_error('Course is misconfigured');
+    }
+    if (! $skillsoft = $DB->get_record('skillsoft', array('id'=>$cm->instance))) {
+        print_error('Course module is incorrect');
+    }
+	
+//	if (! $skillsoft = $DB->get_record('skillsoft', array('id'=>$id))) {
+//		print_error('Course module is incorrect');
+//	}
+//	if (! $course = $DB->get_record('course', array('id'=> $skillsoft->course))) {
+//		print_error('Course is misconfigured');
+//	}
+//	if (! $cm = get_coursemodule_from_instance('skillsoft', $skillsoft->id, $course->id)) {
+//		print_error('Course Module ID was incorrect');
+//	}
 } else {
 	print_error('A required parameter is missing');
 }
+$url = new moodle_url('/mod/skillsoft/report.php',array('id'=>$CM->id));
+
 $PAGE->set_url($url);
-require_course_login($course);
+
+require_login($course->id, false, $cm);
+//require_course_login($course);
 
 //$PAGE->set_context(CONTEXT_MODULE, $cm->id);
 
@@ -74,16 +66,16 @@ $PAGE->set_heading($course->fullname);
 
 //If user has viewreport permission enable "Report" link allowing viewing all usage of asset
 if (has_capability('mod/skillsoft:viewreport', $contextmodule)) {
-	$PAGE->navbar->add($strreport, new moodle_url('/mod/skillsoft/report.php', array('id'=>$id)));
+	$PAGE->navbar->add($strreport, new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id)));
 } else {
 	$PAGE->navbar->add($strreport);
 }
 
 if ($user) {
 	if (empty($attempt)) {
-		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$id,'user'=>'true')));
+		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id,'user'=>'true')));
 	} else {
-		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$id,'user'=>'true')));
+		$PAGE->navbar->add($strallattempt, new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id,'user'=>'true')));
 		$PAGE->navbar->add($strattempt.' '.$attempt);
 	}
 }
@@ -118,7 +110,7 @@ if ($user) {
 	if (empty($attempt)) {
 
 		//Show all attempts
-		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);
+		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);
 
 		$maxattempts = skillsoft_get_last_attempt($skillsoft->id,$USER->id);
 		if ($maxattempts == 0) {
@@ -129,7 +121,7 @@ if ($user) {
 			$row = array();
 			$score = '&nbsp;';
 			if ($trackdata = skillsoft_get_tracks($skillsoft->id,$USER->id,$a)) {
-				$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$skillsoft->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
+				$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
 				$row[] = isset($trackdata->{'[SUMMARY]firstaccess'}) ? userdate($trackdata->{'[SUMMARY]firstaccess'}):'';
 				$row[] = isset($trackdata->{'[SUMMARY]lastaccess'}) ? userdate($trackdata->{'[SUMMARY]lastaccess'}):'';
 				if ($skillsoft->completable == true) {
@@ -153,10 +145,10 @@ if ($user) {
 		}
 
 	} else {
-		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);		$row = array();
+		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);		$row = array();
 		$score = '&nbsp;';
 		if ($trackdata = skillsoft_get_tracks($skillsoft->id,$USER->id,$attempt)) {
-			$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$skillsoft->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
+			$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
 			$row[] = isset($trackdata->{'[SUMMARY]firstaccess'}) ? userdate($trackdata->{'[SUMMARY]firstaccess'}):'';
 			$row[] = isset($trackdata->{'[SUMMARY]lastaccess'}) ? userdate($trackdata->{'[SUMMARY]lastaccess'}):'';
 			if ($skillsoft->completable == true) {
@@ -180,7 +172,7 @@ if ($user) {
 	}
 } else {
 	require_capability('mod/skillsoft:viewreport', $contextmodule);
-	add_to_log($course->id, 'skillsoft', 'view all report', 'report.php?id='.$id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View all users report for Asset: '.$skillsoft->name);
+	add_to_log($course->id, 'skillsoft', 'view all report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View all users report for Asset: '.$skillsoft->name);
 
 	$currenttab = 'allreports';
 	require($CFG->dirroot . '/mod/skillsoft/tabs.php');
