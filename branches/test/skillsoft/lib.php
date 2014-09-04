@@ -1,7 +1,7 @@
 <?php
 /*
  *
- * @package   mod-skillsoft
+ * @package	mod-skillsoft
  * @author	$Author$
  * @version	SVN: $Header$
  * @copyright	2009-2014 Martin Holden
