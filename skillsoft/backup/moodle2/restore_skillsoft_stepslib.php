@@ -59,7 +59,7 @@ class restore_skillsoft_activity_structure_step extends restore_activity_structu
         $this->apply_activity_instance($newitemid);
         
         //Enable (re-)grading:
-        require_once(dirname(dirname(dirname(__FILE__))).'/locallib.php');
+        require_once($CFG->dirroot . '/mod/skillsoft/locallib.php');
         skillsoft_reset_processed($data->assetid);
     }
 
