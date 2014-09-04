@@ -1,36 +1,16 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
-/**
- * Internal library of functions for module skillsoft
- *
- * All the skillsoft specific functions, needed to implement the module
- * logic, should go here. Never include this file from your lib.php!
- *
- * @package   mod-skillsoft
- * @author	  Martin Holden
- * @copyright 2009-2013 Martin Holden
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+/*
+ * @package		mod-skillsoft
+ * @author		$Author$
+ * @version		SVN: $Header$
+ * @copyright	2009-2014 Martin Holden
+ * @license		http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/filelib.php');
-require_once(dirname(__FILE__).'/aiccmodel.php');
-require_once(dirname(__FILE__).'/aicclib.php');
+require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->dirroot.'/mod/skillsoft/lib.php');
+require_once($CFG->dirroot.'/mod/skillsoft/aiccmodel.php');
+require_once($CFG->dirroot.'/mod/skillsoft/aicclib.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -177,11 +157,13 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		if ($CFG->skillsoft_trackingmode == TRACK_TO_LMS) {
 			//Get last attempt
 			if ($lastsession = skillsoft_get_tracks($skillsoft->id, $user->id)) {
+				//Add the last $attempt as a hidden field
+				$element.= "<input type=\"hidden\" name=\"attempt\" id=\"attempt\" value=\"".$lastsession->attempt."\" >";
 				//Get completed status of lastattempt
 				$completed = isset($lastsession->{'[SUMMARY]completed'}) ? userdate($lastsession->{'[SUMMARY]completed'}):null;
 				if (!is_null($completed)) {
-					$nextattempt = $lastsession->attempt + 1;
-					$element.= "<input type=\"checkbox\" name=\"startover\" id=\"startover\" value=\"".$nextattempt."\" \>".get_string('skillsoft_newattempt','skillsoft')."<br/>";
+					//Overwrite the $element taht was hidden input with a checkbox option
+					$element.= "<div id=\"restart\" name=\"restart\"><input type=\"checkbox\" name=\"startover\" id=\"startover\" value=\"".($lastsession->attempt+1)."\" >".get_string('skillsoft_newattempt','skillsoft')."<br/></div>";
 				}
 			}
 		}
@@ -192,6 +174,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		$options = "''";
 	}
 	//Should look at making this call a JavaScript, that we include in the page
+	$element.= "<input type=\"hidden\" name=\"attempt\" id=\"attempt\" value=\"\" >";
 	$element.= "<input type=\"button\" value=\"". get_string('skillsoft_enter','skillsoft') ."\" onclick=\"return openAICCWindow('$launcher', 'courseWindow',$options, false);\" />";
 
 	if ($return) {
