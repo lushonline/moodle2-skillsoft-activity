@@ -1,20 +1,27 @@
  /*
- * JavaScript library for the aicc module.
- *
- * @package   mod-olsa
- * @author 	  Martin Holden 
- * @copyright 2009-2011 Martin Holden
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package		mod-skillsoft
+ * @author		$Author$
+ * @version		SVN: $Header$
+ * @copyright	2009-2014 Martin Holden
+ * @license		http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 function getStartOver() {
+	var containerdiv = document.getElementById('restart');
+	
 	var startover = document.getElementById('startover');
+	var attempt = document.getElementById('attempt');
 	
 	if(startover != undefined) {
 		if (startover.checked) {
-			return startover.value;
+			attempt.value = startover.value;
+			
+			//Remove the "restart" message
+			containerdiv.innerHTML="";
+			
 		}
 	}
+	return attempt.value;
 	//return;
 }
 
