@@ -2,10 +2,10 @@
 /*
  *
  * @package   mod-skillsoft
- * @author    $Author$
- * @version   $Rev$
- * @copyright 2009-2014 Martin Holden
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author	$Author$
+ * @version	SVN: $Header$
+ * @copyright	2009-2014 Martin Holden
+ * @license	http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
