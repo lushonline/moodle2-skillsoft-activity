@@ -3,8 +3,8 @@
  *
  * @package   mod-skillsoft
  * @author    $Author$
- * @version   $Id$
- * @copyright $Copyright$
+ * @version   $Rev$
+ * @copyright 2009-2014 Martin Holden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
