@@ -59,6 +59,8 @@ function setTextArea( thewindow, name, value) {
 		_htmlarea.setHTML(value);
 		return;
 	} else if(_tinymceexists) {
+		//10-SEPT-2014 - Set the underlying textarea so Moodle validation works
+		_textarea.value = value;
 		tinyMCE.get('id_'+name).setContent(value);
 		return;
 	} else if(_textareaexists) {

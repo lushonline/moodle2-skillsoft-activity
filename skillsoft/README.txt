@@ -1,7 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
 Updated: September 2014
-Module Version: 2014090401
+Module Version: 2014100601
 SVN: $Header$
 
 ================================================================
@@ -21,6 +21,7 @@ Known Issues/Limitations
 ------------------------
 * Backup and Restore have been partially implemented in this release, supporting only the Skillsoft Asset - not any tracking data.
 * Support for Multiple Completions when using "Track to OLSA" is only supported using the "Custom Report" mode.
+* The new ATTO TextEditor available in 2.7 is not supported by the automatic process that receives module information. WorkAround: Switch back to TinyMCE
 
 Upgrading from Moodle 1.9.x
 ---------------------------
