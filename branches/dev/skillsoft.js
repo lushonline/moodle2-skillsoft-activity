@@ -49,10 +49,13 @@ function setTextArea( thewindow, name, value) {
 	var _window = thewindow.window;
 	var _textarea = _window.document.getElementById('id_'+name);
 	var _htmlarea = eval('_window.'+'editor_'+hex_md5(name));
+	var _attoeditor = _window.document.getElementById('id_'+name+'editable');
 
+	
 	var _htmlareaexists = !(typeof _htmlarea == "undefined");
-	var _textareaexists = _textarea.type == 'textarea';
-	var _tinymceexists =  tinyMCE != null;
+	var _textareaexists = !(typeof _textarea == "undefined") && _textarea.type == 'textarea';
+	var _tinymceexists =  !(typeof tinyMCE== "undefined");
+	var _attoexists = !(typeof _attoeditor == "undefined");
 	
 	if (_htmlareaexists) {
 		//Set the value for HTMLArea
@@ -62,6 +65,11 @@ function setTextArea( thewindow, name, value) {
 		//10-SEPT-2014 - Set the underlying textarea so Moodle validation works
 		_textarea.value = value;
 		tinyMCE.get('id_'+name).setContent(value);
+		return;
+	} else if(_attoexists) {
+		//10-OCT-2014 - Support Atto Editor
+		_attoeditor.innerHTML = value;
+		_textarea.value = value;
 		return;
 	} else if(_textareaexists) {
 		_textarea.value = value;
