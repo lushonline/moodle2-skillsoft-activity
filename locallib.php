@@ -279,6 +279,10 @@ function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
         skillsoft_update_grades($skillsoft, $userid);
     }
 
+	// Update Moodle Completion status.
+    if (strstr($element,']lesson_status') && (substr($track->value, 0, 1) == 'c' || substr($track->value, 0, 1) == 'p')) {
+		skillsoft_setActivityCompletionState($userid, $skillsoftid, $track->value);
+	}
     //print_object($track);
     return $id;
 }
