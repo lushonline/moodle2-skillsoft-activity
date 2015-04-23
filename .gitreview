@@ -3,4 +3,4 @@ host=reviews.elearning.wgtn.cat-it.co.nz
 port=29418
 project=UNICEF-Totara-mod-skillsoft.git
 defaultremote=origin
-defaultbranch=client-unicef-2.5-dev
+defaultbranch=client-unicef-2.7-dev

@@ -40,7 +40,7 @@ class backup_skillsoft_activity_structure_step extends backup_activity_structure
         $skillsoft = new backup_nested_element('skillsoft', array('id'), array(
                 'assetid', 'name', 'intro', 'introformat', 'audience', 'prereq', 'launch',
                 'mastery', 'assettype', 'duration', 'completable', 'timemodified', 'timecreated',
-                'completionsync'
+                'aiccwindowsettings', 'completionsync'
             ));
 
         // Define sources

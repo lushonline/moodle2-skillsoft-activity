@@ -366,4 +366,3 @@ $string['completionskillsoft'] = 'Skillsoft Completion';
 $string['trackingskillsoft'] = 'Track remote completion status';
 $string['firstcomplete'] = 'Use first pass';
 $string['lastattempt'] = 'Use last attempt';
-
