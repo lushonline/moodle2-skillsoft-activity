@@ -360,8 +360,9 @@ function skillsoft_setCompletedDate($userid,$skillsoftid,$attempt,$time) {
  * @param $userid
  * @param $skillsoftid
  * @param $state
+ * @param int $timecompleted Optional manually set completion time.
  */
-function skillsoft_setActivityCompletionState($userid,$skillsoftid,$state) {
+function skillsoft_setActivityCompletionState($userid,$skillsoftid,$state,$timecompleted=false) {
     global $CFG, $DB;
 
     $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $skillsoftid));
@@ -370,13 +371,16 @@ function skillsoft_setActivityCompletionState($userid,$skillsoftid,$state) {
         require_once($CFG->libdir.'/completionlib.php');
         $completion = new completion_info(get_course($courseid));
         $cm = get_coursemodule_from_instance('skillsoft', $skillsoftid, $courseid);
+        if ($timecompleted) {
+            $cm->timecompleted = $timecompleted;
+        }
         if ((substr($state,0,1) == 'c' || substr($state,0,1) == 'p')) {
             // Mark course as completed
-            $completion->update_state($cm, COMPLETION_COMPLETE);
+            $completion->update_state($cm, COMPLETION_COMPLETE, $userid);
 
         } else if ($completionsync == 2) {
             // Mark course as incomplete
-            $completion->update_state($cm, COMPLETION_INCOMPLETE);
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $userid);
         }
         $completion->invalidatecache($courseid, $userid, true);
     }
