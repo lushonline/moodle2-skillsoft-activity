@@ -43,6 +43,10 @@ function skillsoft_iscompletable($skillsoft) {
 function skillsoft_add_instance($skillsoft) {
 	global $CFG, $DB;
 
+    require_once('locallib.php'); // Needed for constants, that should probably move to this file
+
+    //print_object($skillsoft); // Enable for debugging
+
 	$skillsoft->timecreated = time();
 	$skillsoft->timemodified = time();
 	$skillsoft->completable = skillsoft_iscompletable($skillsoft);
@@ -71,6 +75,9 @@ function skillsoft_add_instance($skillsoft) {
 		}
 	}
 
+    $DB->set_field('course_modules', 'learningtime', ($skillsoft->duration * 60),
+        array('id' => $skillsoft->coursemodule));
+
 	return $result;
 }
 
@@ -92,6 +99,9 @@ function skillsoft_update_instance($skillsoft) {
 	if ($result = $DB->update_record('skillsoft', $skillsoft)) {
 		skillsoft_grade_item_update($skillsoft,NULL);
 	}
+
+    $DB->set_field('course_modules', 'learningtime', ($skillsoft->duration * 60),
+        array('id' => $skillsoft->coursemodule));
 
 	return $result;
 }
@@ -778,6 +788,22 @@ function skillsoft_cron () {
 			skillsoft_customreport($CFG->skillsoft_reportincludetoday);
 		}
 	}
+
+    if ($CFG->skillsoft_catalogueimportcrontask) {
+        if (time() > $CFG->skillsoft_catalogueimportfrequency + skillsoft_full_course_listing_timestamp()) {
+            if (!skillsoft_full_course_listing_download_running()
+                && !skillsoft_bulk_course_metadata_download_running()) {
+                    skillsoft_queue_full_course_listing_download();
+                }
+        }
+    } else {
+        if (time() > $CFG->skillsoft_catalogueimportfrequency + skillsoft_asset_metadata_timestamp()) {
+            if (!skillsoft_full_course_listing_download_running()
+                && !skillsoft_bulk_course_metadata_download_running()) {
+                    // The call to skillsoft_bulk_course_metadata_download_running will do the work.
+                }
+        }
+    }
 	return true;
 }
 
@@ -879,8 +905,9 @@ function skillsoft_uninstall() {
 /**
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_COMPLETION_HAS_RULES
  * @uses FEATURE_GRADE_HAS_GRADE
- * @users FEATURE_BACKUP_MOODLE2
+ * @uses FEATURE_BACKUP_MOODLE2
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
@@ -888,8 +915,63 @@ function skillsoft_supports($feature) {
 	switch($feature) {
 		case FEATURE_MOD_INTRO:               return true;
 		case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
 		case FEATURE_GRADE_HAS_GRADE:         return true;
 		case FEATURE_BACKUP_MOODLE2:          return true;
 		default: return null;
 	}
+}
+
+/**
+ * Obtains the automatic completion state for this module based on any conditions
+ * in module settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function skillsoft_get_completion_state($course,$cm,$userid,$type) {
+    global $DB;
+
+    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $cm->instance));
+    if ($completionsync == 0) {
+        return $type;
+    }
+    $records = $DB->get_records('skillsoft_au_track', array(
+        'skillsoftid' => $cm->instance,
+        'userid' => $userid,
+        'element' => '[CORE]lesson_status',
+    ));
+    $exists = false;
+    foreach ($records as $record) {
+        if ($record->value == 'completed' || $record->value == 'passed') {
+            $exists = true;
+        } else if ($completionsync == 2) {
+            $exists = false;
+        }
+    }
+    return $exists;
+}
+
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ *
+ * See {@link get_array_of_activities()} in course/lib.php
+ *
+ * @param stdClass $coursemodule
+ * @return cached_cm_info info
+ */
+function skillsoft_get_coursemodule_info($coursemodule) {
+    global $CFG;
+
+    $fullurl = "$CFG->wwwroot/mod/skillsoft/launch.php?id=$coursemodule->id";
+    $wh = "width=800,height=600";
+
+    $info = new cached_cm_info();
+    $info->onclick = "window.open('$fullurl', 'courseWindow', '$wh'); return false;";
+    return $info;
 }

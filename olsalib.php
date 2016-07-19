@@ -538,6 +538,204 @@ function AI_GetXmlAssetMetaData($assetid) {
 }
 
 /**
+ * Retrieves the metadata for the supplied SkillSoft assetids
+ *
+ * @param array $assetids array of SkillSoft assetid
+ * @return olsasoapresponse olsasoapresponse->result is an object representing the deserialised XML response
+ */
+function AI_GetMultipleAssetMetaData(array $assetids) {
+
+	global $CFG;
+
+	if (!isolsaconfigurationset()) {
+		$response = new olsaresponse(false,get_string('skillsoft_olsasettingsmissing','skillsoft'),NULL);
+	} else {
+
+		//Set local OLSA Variables
+		$endpoint = $CFG->skillsoft_olsaendpoint;
+		$customerId = $CFG->skillsoft_olsacustomerid;
+		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
+
+
+		//Specify the WSDL using the EndPoint
+		$wsdlurl = $endpoint.'?WSDL';
+
+		//Specify the SOAP Client Options
+		$options = array(
+			"trace"      => 0,
+			"exceptions" => 0,
+			"soap_version"   => SOAP_1_2,
+			"cache_wsdl" => WSDL_CACHE_BOTH,
+			"encoding"=> "UTF-8"
+			);
+
+			//Create a new instance of the OLSA Soap Client
+			$client = new olsa_soapclient($wsdlurl,$options);
+
+			//Create the USERNAMETOKEN
+			$client->__setUsernameToken($customerId,$sharedsecret);
+
+			//Create the Request
+			$GetMultipleAssetMetaData =  array(
+	"customerId" => $customerId,
+    "assetId" => implode(' ', $assetids),
+    "metadataFormat" => 'XML',
+			);
+
+			//Call the WebService and stored result in $result
+			$result=$client->__soapCall('AI_GetMultipleAssetMetaData',array('parameters'=>$GetMultipleAssetMetaData));
+
+			if (is_soap_fault($result)) {
+				if (stripos($result->getmessage(),'security token could not be authenticated or authorized')) {
+					//Authentication Failure
+					//print_error('olsassoapauthentication','skillsoft');
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapauthentication','skillsoft'),NULL);
+				} else {
+					//General SOAP Fault
+					//print_error('olsassoapfault','skillsoft','',$result->getmessage());
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapfault','skillsoft',$result->getmessage()),NULL);
+				}
+			} else {
+				$response = new olsaresponse(true,'',$result);
+			}
+	}
+	return $response;
+return $response;
+}
+
+/**
+ * Polls for a response to AI_GetMultipleAssetMetaData
+ *
+ * @param string $handle
+ * @param bool cache true if the XML response should be cached to disk
+ * @return olsasoapresponse olsasoapresponse->result is an object representing the deserialised XML response
+ */
+function AI_PollForAssetMetaData($handle, $cache = false) {
+
+	global $CFG;
+
+	if (!isolsaconfigurationset()) {
+		$response = new olsaresponse(false,get_string('skillsoft_olsasettingsmissing','skillsoft'),NULL);
+	} else {
+
+		//Set local OLSA Variables
+		$endpoint = $CFG->skillsoft_olsaendpoint;
+		$customerId = $CFG->skillsoft_olsacustomerid;
+		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
+
+
+		//Specify the WSDL using the EndPoint
+		$wsdlurl = $endpoint.'?WSDL';
+
+		//Specify the SOAP Client Options
+		$options = array(
+			"trace"      => 0,
+			"exceptions" => 0,
+			"soap_version"   => SOAP_1_2,
+			"cache_wsdl" => WSDL_CACHE_BOTH,
+			"encoding"=> "UTF-8"
+			);
+
+			//Create a new instance of the OLSA Soap Client
+			$client = new olsa_soapclient($wsdlurl,$options);
+
+			//Create the USERNAMETOKEN
+			$client->__setUsernameToken($customerId,$sharedsecret);
+
+			//Create the Request
+			$PollForAssetMetaData =  array(
+	"customerId" => $customerId,
+    "handle" => $handle
+			);
+
+			//Call the WebService and stored result in $result
+			$result=$client->__soapCall('AI_PollForAssetMetaData',array('parameters'=>$PollForAssetMetaData));
+
+			if (is_soap_fault($result)) {
+				if (stripos($result->getmessage(),'security token could not be authenticated or authorized')) {
+					//Authentication Failure
+					//print_error('olsassoapauthentication','skillsoft');
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapauthentication','skillsoft'),NULL);
+				} elseif (!stripos($result->detail->exceptionName, 'DataNotReadyYetFault') == false){
+					//Report not ready yet
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapreportnotready','skillsoft'),NULL);
+				} else {
+					//General SOAP Fault
+					//print_error('olsassoapfault','skillsoft','',$result->getmessage());
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapfault','skillsoft',$result->getmessage()),NULL);
+				}
+			} else {
+				$response = new olsaresponse(true,'',$result);
+			}
+	}
+	return $response;
+return $response;
+}
+
+/**
+ * Retrieves the full course listing
+ *
+ * @return olsasoapresponse olsasoapresponse->result is an object representing the deserialised XML response
+ */
+function AI_InitiateFullCourseListingReport() {
+	global $CFG;
+
+	if (!isolsaconfigurationset()) {
+		$response = new olsaresponse(false,get_string('skillsoft_olsasettingsmissing','skillsoft'),NULL);
+	} else {
+
+		//Set local OLSA Variables
+		$endpoint = $CFG->skillsoft_olsaendpoint;
+		$customerId = $CFG->skillsoft_olsacustomerid;
+		$sharedsecret = $CFG->skillsoft_olsasharedsecret;
+
+
+		//Specify the WSDL using the EndPoint
+		$wsdlurl = $endpoint.'?WSDL';
+
+		//Specify the SOAP Client Options
+		$options = array(
+			"trace"      => 0,
+			"exceptions" => 0,
+			"soap_version"   => SOAP_1_2,
+			"cache_wsdl" => WSDL_CACHE_BOTH,
+			"encoding"=> "UTF-8"
+			);
+
+			//Create a new instance of the OLSA Soap Client
+			$client = new olsa_soapclient($wsdlurl,$options);
+
+			//Create the USERNAMETOKEN
+			$client->__setUsernameToken($customerId,$sharedsecret);
+
+			//Create the Request
+			$InitiateFullCourseListingReportRequest =  array(
+	"customerId" => $customerId,
+    "reportFormat" => 'XML',
+    "mode" => 'detail'
+			);
+
+			//Call the WebService and stored result in $result
+			$result=$client->__soapCall('AI_InitiateFullCourseListingReport',array('parameters'=>$InitiateFullCourseListingReportRequest));
+
+			if (is_soap_fault($result)) {
+				if (stripos($result->getmessage(),'security token could not be authenticated or authorized')) {
+					//Authentication Failure
+					//print_error('olsassoapauthentication','skillsoft');
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapauthentication','skillsoft'),NULL);
+				} else {
+					//General SOAP Fault
+					//print_error('olsassoapfault','skillsoft','',$result->getmessage());
+					$response = new olsaresponse(false,get_string('skillsoft_olsassoapfault','skillsoft',$result->getmessage()),NULL);
+				}
+			} else {
+				$response = new olsaresponse(true,'',$result);
+			}
+	}
+	return $response;
+}
+
+/**
  * Retrieves the usage data for the supplied SkillSoft assetid
  * for the specified user
  *

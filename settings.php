@@ -104,3 +104,13 @@ $settings->add(new admin_setting_configtext('skillsoft_aiccwindowsettings',
 			   get_string('skillsoft_aiccwindowsettings', 'skillsoft'),
 			   get_string('skillsoft_aiccwindowsettingsdesc', 'skillsoft'),
 			   'width=800,height=600'));	
+
+$settings->add(new admin_setting_configcheckbox('skillsoft_catalogueimportcrontask',
+    get_string('skillsoft_catalogueimportcrontask', 'skillsoft'),
+    get_string('skillsoft_catalogueimportcrontaskdesc', 'skillsoft'),
+    1));
+
+$settings->add(new admin_setting_configduration('skillsoft_catalogueimportfrequency',
+    get_string('skillsoft_catalogueimportfrequency', 'skillsoft'),
+    get_string('skillsoft_catalogueimportfrequencydesc', 'skillsoft'),
+    4 * 7 * 86400, 7 * 86400));

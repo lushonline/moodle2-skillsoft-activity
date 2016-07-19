@@ -10,6 +10,7 @@
 defined('MOODLE_INTERNAL') || die();
 $string['pluginadministration'] = 'Skillsoft Asset';
 $string['pluginname'] = 'Skillsoft Asset';
+$string['skillsoft:addinstance'] = 'Add a new Skillsoft activity';
 
 $string['modulename'] = 'Skillsoft Asset';
 $string['modulename_help'] = '<p>This module provides a way to simply create a new activity for a Skillsoft OLSA Hosted asset that will be tracked by Moodle</p>
@@ -18,7 +19,7 @@ $string['modulename_help'] = '<p>This module provides a way to simply create a n
 
 <strong>Skillsoft Open Learning Services Architecture (OLSA)</strong>
 <p>The Skillsoft Open Learning Services Architecture (OLSA) is an enhancements to the Skillsoft Skillport LMS architecture.</p>
-<p>It is made up of two components:</p> 
+<p>It is made up of two components:</p>
 <ul>
 <li>LMS Interface - This provides a means for Moodle to launch Skillsoft assets using the industry standard AICC HACP method.</li>
 <li>Web Services - This provides a means for another system to interact with Skillport using standards based Web Services. These provide the functionality in this module to support retrieving of course metadata and synchronising progress between the systems</li>
@@ -110,6 +111,11 @@ $string['skillsoft_strictaiccstudentiddesc'] = 'When enabled the AICC handler en
 $string['skillsoft_aiccwindowsettings'] = 'Default window settings for AICC launches';
 $string['skillsoft_aiccwindowsettingsdesc'] = 'The settings to use for the popup window for AICC launches for example width=800,height=600';
 
+$string['skillsoft_catalogueimportcrontask'] = 'Enable Skillsoft catalogue synchronisation cron';
+$string['skillsoft_catalogueimportcrontaskdesc'] = 'When enabled, the system will automatically periodically download the latest Skillsoft catalogue';
+
+$string['skillsoft_catalogueimportfrequency'] = 'Skillsoft catalogue synchronisation frequency';
+$string['skillsoft_catalogueimportfrequencydesc'] = 'If the Skillsoft catalogue synchronisation cron is enabled, this controls how often downloads occur';
 
 //mod_form.php
 $string['skillsoft_assetid'] = 'Asset ID';
@@ -323,3 +329,40 @@ $string['skillsoft_allattempt'] = 'All Attempts';
 $string['skillsoft_info'] = 'Info';
 $string['skillsoft_results'] = 'Results';
 $string['skillsoft_allresults'] = 'All Users Results';
+
+//cron
+$string['skillsoft_cron_start'] = 'Running mod_skillsoft cron';
+$string['skillsoft_cron_end'] = 'Done';
+
+//cataloguesync.php
+$string['cataloguesync'] = 'Catalogue Synchronisation';
+$string['import'] = 'Import';
+$string['importcatalogue'] = 'Import catalogue';
+$string['cataloguetime'] = 'Last catalogue import completed';
+$string['metadatatime'] = 'Last metadata import completed';
+$string['running'] = 'Running';
+
+//catalogue.php
+$string['catalogue'] = 'Skillsoft Catalogue';
+$string['bulk_instructions'] = 'Drag assets from the Skillsoft catalogue into their Totara category';
+$string['expand'] = 'Expand';
+$string['collapse'] = 'Collapse';
+$string['info'] = 'Information';
+$string['expand_all'] = 'Expand all';
+$string['startbulkimport'] = 'Start import';
+$string['classify_defaults'] = 'Default classification';
+
+$string['dc:identifier'] = 'Asset ID';
+$string['dc:title'] = 'Name';
+$string['dc:language'] = 'Language';
+$string['olsa:duration'] = 'Duration';
+$string['dc:description'] = 'Description';
+$string['olsa:prerequisites'] = 'Prerequisites';
+
+$string['error:nocatalogue'] = 'Error: Catalogue has not been downloaded yet';
+
+// Custom completion
+$string['completionskillsoft'] = 'Skillsoft Completion';
+$string['trackingskillsoft'] = 'Track remote completion status';
+$string['firstcomplete'] = 'Use first pass';
+$string['lastattempt'] = 'Use last attempt';

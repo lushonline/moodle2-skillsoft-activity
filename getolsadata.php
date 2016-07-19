@@ -40,6 +40,7 @@ if (strtolower($id) != 'sso') {
 				print "window.opener.setTextArea(window.opener,'introeditor',".'"'.olsadatatohtml($response->result->description->_).'");';
 				print "window.opener.setTextArea(window.opener,'audience',".'"'.olsadatatohtml($response->result->audience).'");';
 				print "window.opener.setTextArea(window.opener,'prereq',".'"'.olsadatatohtml($response->result->prerequisites).'");';
+				print "if (window.opener.getolsadata_callback && typeof(window.opener.getolsadata_callback) == 'function') window.opener.getolsadata_callback();";
 				print "window.close();";
 			} else {
 				//error($response->errormessage);

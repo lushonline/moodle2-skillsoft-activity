@@ -119,6 +119,45 @@ function skillsoft_check_sessionid($sessionid) {
 }
 
 /**
+ * Given a skillsoft object this will return the lauch url
+ *
+ * @param stdClass $skillsoft
+ * @return string
+ */
+function skillsoft_launch_url($skillsoft, $user) {
+	global $CFG;
+	if (stripos($skillsoft->launch,'?') !== false) {
+		$connector = '&';
+	} else {
+		$connector = '?';
+	}
+
+	$element = "";
+
+	/* We need logic here that if SSO url defined we use this */
+	if (!$CFG->skillsoft_usesso && strtolower($skillsoft->assetid) != 'sso') {
+		//skillsoft_ssourl is not defined so do AICC
+		$newkey = skillsoft_create_sessionid($user->id, $skillsoft->id);
+
+		$launcher = $skillsoft->launch;
+		//Section 508 Enhancement - add x508 value of $user->screenreader
+		if (isset($user->screenreader) && $user->screenreader == 1) {
+			$launcher .= $connector.'x508=1';
+		}
+		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
+
+		/*
+	 	* TODO: WE NEED LOGIC HERE TO HANDLE ADDING A NEW ATTEMPT WHEN USING TRACK TO LMS
+	 	*/
+	} else {
+		//we have skillsoft_ssourl so we replace {0} with $skillsoft->id
+		//$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->assetid);
+		$launcher = sprintf($CFG->skillsoft_ssourl,$skillsoft->id);
+	}
+    return $launcher;
+}
+
+/**
  * Given an skillsoft object this will return
  * the HTML snippet for displaying the Launch Button
  * or output the HTML based on value of $return
@@ -143,7 +182,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		
 		$launcher = $skillsoft->launch;
 		//Section 508 Enhancement - add x508 value of $user->screenreader
-		if ($user->screenreader == 1) {
+		if (isset($user->screenreader) && $user->screenreader == 1) {
 			$launcher .= $connector.'x508=1';
 		}
 		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
@@ -199,48 +238,53 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
  * @return bool true if succesful
  */
 function skillsoft_insert_track($userid,$skillsoftid,$attempt,$element,$value) {
-	global $DB;
-	$id = null;
+    global $DB;
+    $id = null;
 
-	//Work to support multiple attempts
-	//$attempt = 1;
+    //Work to support multiple attempts
+    //$attempt = 1;
 
-	/* 13-SEP-2013
-	 * Added error trap to convert $value=NULL to null string ""
-	 */
-	if ($value===NULL) {
-		$value = "";
-	}
-	
-	$params = array($userid,$skillsoftid,$attempt,$element);
-	if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
-	
-		$track->value = $value;
-		$track->timemodified = time();
-		$id = $DB->update_record('skillsoft_au_track',$track);
-	} else {
-		$track = new stdClass();
-		$track->userid = $userid;
-		$track->skillsoftid = $skillsoftid;
-		$track->attempt = $attempt;
-		$track->element = $element;
-		//$track->value = addslashes($value);
-		$track->value = $value;
-		$track->timemodified = time();
-		$id = $DB->insert_record('skillsoft_au_track',$track);
-	}
+    /* 13-SEP-2013
+     * Added error trap to convert $value=NULL to null string ""
+     */
+    if ($value===NULL) {
+        $value = "";
+    }
 
-	//if we have a best score OR we have passed/completed status then update the gradebook
-	if ( strstr($element, ']bestscore') ||
-	(strstr($element,']lesson_status') && (substr($track->value,0,1) == 'c' || substr($track->value,0,1) == 'p'))
-	) {
-		$conditions = array('id'=> $skillsoftid);
-		$skillsoft = $DB->get_record('skillsoft', $conditions);
-		include_once('lib.php');
-		skillsoft_update_grades($skillsoft, $userid);
+    $params = array($userid,$skillsoftid,$attempt,$element);
+    if ($track = $DB->get_record_select('skillsoft_au_track',"userid=? AND skillsoftid=? AND attempt=? AND element=?",$params)) {
+
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = $DB->update_record('skillsoft_au_track',$track);
+    } else {
+        $track = new stdClass();
+        $track->userid = $userid;
+        $track->skillsoftid = $skillsoftid;
+        $track->attempt = $attempt;
+        $track->element = $element;
+        //$track->value = addslashes($value);
+        $track->value = $value;
+        $track->timemodified = time();
+        $id = $DB->insert_record('skillsoft_au_track',$track);
+    }
+
+    //if we have a best score OR we have passed/completed status then update the gradebook
+    if ( strstr($element, ']bestscore') ||
+        (strstr($element,']lesson_status') && (substr($track->value,0,1) == 'c' || substr($track->value,0,1) == 'p'))
+    ) {
+        $conditions = array('id'=> $skillsoftid);
+        $skillsoft = $DB->get_record('skillsoft', $conditions);
+        include_once('lib.php');
+        skillsoft_update_grades($skillsoft, $userid);
+    }
+
+	// Update Moodle Completion status.
+    if (strstr($element,']lesson_status') && (substr($track->value, 0, 1) == 'c' || substr($track->value, 0, 1) == 'p')) {
+		skillsoft_setActivityCompletionState($userid, $skillsoftid, $track->value);
 	}
-	//print_object($track);
-	return $id;
+    //print_object($track);
+    return $id;
 }
 
 /**
@@ -308,6 +352,39 @@ function skillsoft_setCompletedDate($userid,$skillsoftid,$attempt,$time) {
 	return $id;
 }
 
+/**
+ * setActivityCompletionState
+ *
+ * If skillsoft completion is enabled, update the activity completion state
+ *
+ * @param $userid
+ * @param $skillsoftid
+ * @param $state
+ * @param int $timecompleted Optional manually set completion time.
+ */
+function skillsoft_setActivityCompletionState($userid,$skillsoftid,$state,$timecompleted=false) {
+    global $CFG, $DB;
+
+    $completionsync = $DB->get_field('skillsoft', 'completionsync', array('id' => $skillsoftid));
+    $courseid = $DB->get_field('skillsoft', 'course', array('id' => $skillsoftid));
+    if ($completionsync) {
+        require_once($CFG->libdir.'/completionlib.php');
+        $completion = new completion_info(get_course($courseid));
+        $cm = get_coursemodule_from_instance('skillsoft', $skillsoftid, $courseid);
+        if ($timecompleted) {
+            $cm->timecompleted = $timecompleted;
+        }
+        if ((substr($state,0,1) == 'c' || substr($state,0,1) == 'p')) {
+            // Mark course as completed
+            $completion->update_state($cm, COMPLETION_COMPLETE, $userid);
+
+        } else if ($completionsync == 2) {
+            // Mark course as incomplete
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $userid);
+        }
+        $completion->invalidatecache($courseid, $userid, true);
+    }
+}
 
 /**
  * setAccessCount
@@ -1344,3 +1421,358 @@ function skillsoft_process_received_customreport($handle, $trace=false, $prefix=
 		mtrace($prefix.get_string('skillsoft_customreport_process_end','skillsoft').' (took '.$duration.' seconds)');
 	}
 }
+
+function skillsoft_bulk_import_fileinfo($filename) {
+    $fileinfo = array(
+        'contextid' => context_system::instance()->id,
+        'component' => 'mod_skillsoft',
+        'filearea'  => 'bulk_import',
+        'itemid'    => 0,
+        'filepath'  => '/',
+        'filename'  => $filename);
+    return $fileinfo;
+}
+
+/**
+ * Initiate a download of a full course listing.
+ * @return bool success
+ */
+function skillsoft_queue_full_course_listing_download() {
+    require_once(dirname(__FILE__) . '/olsalib.php');
+
+    set_config('skillsoft_olsa_error', false);
+    $response = AI_InitiateFullCourseListingReport();
+    if ($response->success) {
+        set_config('skillsoft_full_course_listing_handle', $response->result->handle);
+    } else {
+        // Record the error
+        set_config('skillsoft_olsa_error', $response->errormessage);
+        print($response->errormessage);
+    }
+    return $response->success;
+}
+
+/**
+ * Check the running status on a full course listing download
+ *
+ * @param boolean $continue Set false to disable automatic metadata download
+ * @return boolean
+ */
+function skillsoft_full_course_listing_download_running($continue = true) {
+    global $CFG;
+
+    require_once(dirname(__FILE__) . '/olsalib.php');
+
+    if ($CFG->skillsoft_full_course_listing_handle) {
+        $response = UTIL_PollForReport($CFG->skillsoft_full_course_listing_handle);
+        if ($response->success == false && $response->errormessage == "The report is not yet ready.") {
+            return true;
+        } else {
+            set_config('skillsoft_full_course_listing_handle', false);
+            set_config('skillsoft_olsa_error', false);
+            if ($response->success == true) {
+                // Download the completed report
+                $data = file_get_contents($response->result->olsaURL);
+
+                // Prepare to save a copy
+                $fs = get_file_storage();
+                $fileinfo = skillsoft_bulk_import_fileinfo('courselisting.xml');
+
+                // Check for existing download
+                $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+                            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+
+                // Delete it if found
+                if ($file) {
+                    $file->delete();
+                }
+
+                // Save dowloaded replacement
+                $fs->create_file_from_string($fileinfo, $data);
+
+                // Clear the saved handle
+                set_config('skillsoft_full_course_listing_handle', false);
+
+                if ($continue) {
+                    skillsoft_queue_bulk_course_metadata_download();
+                }
+            } else {
+                // Record the error
+                set_config('skillsoft_olsa_error', $response->errormessage);
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Initiate a download of course metadata for all assets found in the latest
+ * course listing download.
+ */
+function skillsoft_queue_bulk_course_metadata_download() {
+    set_config('skillsoft_olsa_error', false);
+    $doc = skillsoft_full_course_listing_document();
+    if ($doc) {
+        $xpath = new DOMXPath($doc);
+        $assetnodes = $xpath->query('//asset');
+        $assets = array();
+        for ($i = 0; $i < $assetnodes->length; $i++) {
+            $assets[] = $assetnodes->item($i)->getAttribute('id');
+        }
+        $assets = array_unique($assets);
+        $response = AI_GetMultipleAssetMetaData($assets);
+        if ($response->success) {
+            set_config('skillsoft_bulk_course_metadata_handle', $response->result->handle);
+        } else {
+            // Record the error
+            set_config('skillsoft_olsa_error', $response->errormessage);
+            print($response->errormessage);
+        }
+        return $response->success;
+    }
+    return false;
+}
+
+/**
+ * Check the running status on a course metadata download
+ *
+ * @return boolean
+ */
+function skillsoft_bulk_course_metadata_download_running() {
+    global $CFG;
+
+    require_once(dirname(__FILE__) . '/olsalib.php');
+
+    if ($CFG->skillsoft_bulk_course_metadata_handle) {
+        $response = AI_PollForAssetMetaData($CFG->skillsoft_bulk_course_metadata_handle);
+        if ($response->success == true) {
+            set_config('skillsoft_bulk_course_metadata_handle', false);
+            set_config('skillsoft_olsa_error', false);
+            if ($response->success == true) {
+                // Download the completed report
+                $data = file_get_contents($response->result->olsaURL);
+                file_put_contents('/tmp/skillsoft-metadata.zip', $data);
+                $zip = zip_open('/tmp/skillsoft-metadata.zip');
+                if (is_resource($zip)) {
+                    while ($entry = zip_read($zip)) {
+                        $name = zip_entry_name($entry);
+                        if (preg_match('/^Customer_catalog_.*$/', $name) && zip_entry_open($zip, $entry)) {
+                            $data = zip_entry_read($entry, zip_entry_filesize($entry));
+                            $fs = get_file_storage();
+                            $fileinfo = skillsoft_bulk_import_fileinfo('metadata.xml');
+                            $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+                                $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+                            if ($file) {
+                                $file->delete();
+                            }
+                            $fs->create_file_from_string($fileinfo, $data);
+                            break;
+                        }
+                    }
+                    zip_close($zip);
+                }
+                // Clear the saved handle
+                set_config('skillsoft_bulk_course_metadata_handle', false);
+            } else {
+                // Record the error
+                set_config('skillsoft_olsa_error', $response->errormessage);
+            }
+        } else {
+            if ($response->errormessage == "The report is not yet ready.") {
+                return true;
+            } else {
+                set_config('skillsoft_olsa_error', $response->errormessage);
+            }
+        }
+    }
+    return false;
+}
+
+function skillsoft_full_course_listing_timestamp() {
+    $fs = get_file_storage();
+    $fileinfo = skillsoft_bulk_import_fileinfo('courselisting.xml');
+
+    // Check for existing download
+    $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+        $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+
+    if ($file) {
+        return $file->get_timemodified();
+    } else {
+        return 0;
+    }
+}
+
+function skillsoft_full_course_listing_document() {
+    $fs = get_file_storage();
+    $fileinfo = skillsoft_bulk_import_fileinfo('courselisting.xml');
+
+    // Check for existing download
+    $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+        $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+
+    // Delete it if found
+    if ($file) {
+        $doc = new DOMDocument();
+        $doc->loadXML($file->get_content());
+        return $doc;
+    } else {
+        return null;
+    }
+}
+
+function skillsoft_asset_metadata_timestamp() {
+    $fs = get_file_storage();
+    $fileinfo = skillsoft_bulk_import_fileinfo('metadata.xml');
+
+    // Check for existing download
+    $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+        $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+
+    if ($file) {
+        return $file->get_timemodified();
+    } else {
+        return 0;
+    }
+}
+
+function skillsoft_asset_metadata_document() {
+    $fs = get_file_storage();
+    $fileinfo = skillsoft_bulk_import_fileinfo('metadata.xml');
+
+    // Check for existing download
+    $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+        $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+
+    // Delete it if found
+    if ($file) {
+        $doc = new DOMDocument();
+        $doc->loadXML($file->get_content());
+        return $doc;
+    } else {
+        return null;
+    }
+}
+
+function skillsoft_get_asset_metadata($asset) {
+    $doc = skillsoft_asset_metadata_document();
+    if ($doc) {
+        $xpath = new DOMXPath($doc);
+        $xpath->registerNamespace('olsa', 'http://www.skillsoft.com/services/olsa_v1_0/');
+        $xpath->registerNamespace('dc', 'http://purl.org/dc/elements/1.1/');
+        $assets = $xpath->query('/olsa:metadata/olsa:asset/dc:identifier[text()="'.$asset.'"]/..');
+        return $assets->item(0);
+    }
+}
+
+function skillsoft_import_asset($asset, $category, $classifications) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/local/content/lib.php');
+
+    // Prepare the $_POST array for the later call to form_save_classify
+    // It seems I must hack this into $_POST
+    $original_post = $_POST;
+    foreach ($classifications as $classification) {
+        $matches = array();
+        if (preg_match('/([^\\]]+)\\[([^\\]]+)\\]/', $classification, $matches)) {
+            $_POST[$matches[1]][$matches[2]] = 1;
+        } else {
+            print_error('badparams', 'mod_skillsoft', '', array('classifications' => $classifications, 'current' => $classification, 'matches' => $matches));
+        }
+    }
+
+    // Create the skillsoft course
+    $metadata = skillsoft_get_asset_metadata($asset);
+    $properties = array();
+    for ($i = 0; $i < $metadata->childNodes->length; $i++) {
+        $child = $metadata->childNodes->item($i);
+        $properties[$child->nodeName] = trim($child->textContent);
+    }
+    do {
+        $shortname = $properties['dc:title'];
+        if (!empty($suffix)) {
+            $shortname .= " ($suffix)";
+            $suffix++;
+        } else {
+            $suffix = 1;
+        }
+        if (!$DB->record_exists('course', array('shortname' => $shortname))) {
+            break;
+        }
+
+    } while(1);
+
+    $type = local_content_get_type('skillsoft', 0);
+
+    $newcourse = new stdClass();
+    $newcourse->assetid         = $asset;
+    $newcourse->audience        = array(
+        'text'   => $properties['olsa:audience'],
+        'format' => 1
+    );
+    $newcourse->coursecategory  = $category;
+    $newcourse->coursefullname  = $properties['dc:title'];
+    $newcourse->name            = $properties['dc:title'];
+    $newcourse->courseid        = 0;
+    $newcourse->courseshortname = $shortname;
+    $newcourse->duration        = $properties['olsa:duration'];
+    $newcourse->introeditor     = array(
+        'text' => $properties['dc:description'],
+        'format' => 1,
+    );
+    $newcourse->launch          = $properties['olsa:launchurl'];
+    $newcourse->prereq          = array(
+        'text' => $properties['olsa:prerequisites'],
+        'format' => 1
+    );
+    $newcourse->shortsummary    = $properties['dc:description'];
+    $summary = '';
+
+    if (!empty($properties['dc:description'])) {
+        $summary .= html_writer::tag('h2', get_string('skillsoft_summary', 'skillsoft'));
+        $summary .= $properties['dc:description'];
+    }
+    if (!empty($properties['olsa:audience'])) {
+        $summary .= html_writer::tag('h2', get_string('skillsoft_audience', 'skillsoft'));
+        $summary .= $properties['olsa:audience'];
+    }
+    if (!empty($properties['olsa:prerequisites'])) {
+        $summary .= html_writer::tag('h2', get_string('skillsoft_prereq', 'skillsoft'));
+        $summary .= $properties['olsa:prerequisites'];
+    }
+    if (!empty($properties['olsa:duration'])) {
+        $summary .= html_writer::tag('h2', get_string('skillsoft_duration', 'skillsoft'));
+        $summary .= $properties['olsa:duration'];
+    }
+    $newcourse->summary_editor  = array(
+        'text' => $summary,
+        'format' => 1,
+        'itemid' => file_get_unused_draft_itemid()
+    );
+    $newcourse->overviewfiles_filemanager = 0;
+    $type->form_save_editdetails($newcourse, null);
+
+    // Now classify the imported asset.
+    $type->form_save_classify(null, null);
+
+    // And set the audiences
+    $templateid = $DB->get_field('course', 'id', array('idnumber' => $type->get_template_idnumber()));
+
+    $audiencevisible = $DB->get_field('course', 'audiencevisible', array('id' => $templateid));
+    $DB->set_field('course', 'audiencevisible', $audiencevisible, array('id' => $type->courseid));
+
+    $enroled_audiences = totara_cohort_get_course_cohorts($templateid, null, 'c. id');
+    foreach ($enroled_audiences as $audience) {
+        totara_cohort_add_association($audience->id, $type->courseid, COHORT_ASSN_ITEMTYPE_COURSE, COHORT_ASSN_VALUE_ENROLLED);
+    }
+
+    $visible_audiences = totara_cohort_get_visible_learning($templateid);
+    foreach ($visible_audiences as $audience) {
+        totara_cohort_add_association($audience->id, $type->courseid, COHORT_ASSN_ITEMTYPE_COURSE, COHORT_ASSN_VALUE_VISIBLE);
+    }
+
+    // Finally, restore the original $_POST values
+    $_POST = $original_post;
+}
+

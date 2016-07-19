@@ -1,0 +1,105 @@
+#skillsoft-catalogue td {
+    vertical-align: top;
+}
+
+#skillsoft-catalogue td > div {
+    overflow: auto;
+    width: 100%;
+}
+
+#skillsoft-catalogue th a {
+    font-size: 85%;
+    cursor:pointer;
+    margin-left:10px;
+}
+
+#skillsoft-catalogue ul {
+    margin: 0;
+    list-style-type:none;
+}
+
+#skillsoft-catalogue li.skillsoft-group,
+#skillsoft-catalogue li.category {
+    list-style: none;
+}
+
+#skillsoft-catalogue li.skillsoft-group,
+#skillsoft-catalogue li.category {
+    padding-left:0;
+    margin-left:15px;
+}
+
+#skillsoft-catalogue li.skillsoft-group.collapsed > ul,
+#skillsoft-catalogue li.category.collapsed > ul {
+    display: none;
+}
+
+#skillsoft-catalogue li.category.expanded > a > img.expand,
+#skillsoft-catalogue li.category.collapsed > a > img.collapse,
+#skillsoft-catalogue li.skillsoft-group.expanded > a > img.expand,
+#skillsoft-catalogue li.skillsoft-group.collapsed > a > img.collapse {
+    display: none;
+}
+
+#skillsoft-catalogue li.skillsoft-group img,
+#skillsoft-catalogue li.category img {
+    margin-left:-15px;
+    padding-right:8px;
+}
+
+#skillsoft-catalogue li.category.drop-hover > a {
+    font-weight: bold;
+}
+
+#skillsoft-catalogue li.skillsoft-asset img.delete {
+    float: right;
+}
+#skillsoft-catalogue td.catalogue li.skillsoft-asset {
+    cursor:move;
+    padding:5px 6px 5px 24px;
+    background:transparent url([[pix:core|i/dragdrop]]) no-repeat 3px 7px;
+}
+
+#skillsoft-catalogue li.skillsoft-group img.info,
+#skillsoft-selected li.skillsoft-asset img.info {
+    cursor:pointer;
+    position:relative;
+    margin-left:5px;
+    margin-right:5px;
+    margin-bottom:-3px;
+}
+
+#skillsoft-catalogue td.catalogue li.skillsoft-asset.imported {
+    font-style: italic;
+}
+
+#skillsoft-catalogue td.categories li.skillsoft-asset.imported {
+    font-weight: bold;
+}
+
+#skillsoft-catalogue .topics {
+    font-size: 80%;
+}
+
+#skillsoft-catalogue .topics li {
+    list-style: none;
+    display: inline;
+}
+
+#skillsoft-catalogue li.skillsoft-asset ul.classification li {
+    display: none;
+}
+
+#skillsoft-catalogue li.skillsoft-asset:hover ul.classification li {
+    display: inline;
+}
+
+#classify-form .yui3-tabview-panel {
+    height: 244px;
+    overflow: auto;
+}
+
+#classify-form ul.yui3-tabview-list {
+    margin: 20px 0 0 0;
+}
+

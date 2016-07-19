@@ -175,5 +175,44 @@ function xmldb_skillsoft_upgrade($oldversion) {
     	$result = true;
     }    
         
+    if ($result && $oldversion < 2015080400) {
+        $table = new xmldb_table('skillsoft');
+        $field = new xmldb_field('completionsync', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2015080400, 'skillsoft');
+        $result = true;
+    }
+
+    if ($result && $oldversion < 2015082000) {
+        // Check for completed skillsoft activities that do not have a corresponding activity completion record.
+        require_once($CFG->dirroot.'/mod/skillsoft/locallib.php');
+        require_once($CFG->libdir.'/completionlib.php');
+
+        // Get skillsoft activities.
+        $modtype = $DB->get_record('modules', array('name' => 'skillsoft'), 'id', MUST_EXIST);
+        $moduleinstances = $DB->get_recordset('course_modules', array('module' => $modtype->id), 'id', 'id,course,instance');
+
+        foreach ($moduleinstances as $instance) {
+            $cm = get_coursemodule_from_instance('skillsoft', $instance->instance, $instance->course, false, MUST_EXIST);
+            // Get instance track data.
+            $tracks = $DB->get_recordset('skillsoft_au_track', array('skillsoftid' => $cm->instance, 'element' => '[CORE]lesson_status'), 'id');
+            // for each track, update the activity completion.
+            foreach ($tracks as $track) {
+                // Get the correct completed time.
+                $track->timecompleted = $DB->get_field('skillsoft_au_track', 'value',
+                    array('skillsoftid' => $track->skillsoftid, 'element' => '[SUMMARY]completed', 'userid' => $track->userid, 'attempt' => $track->attempt));
+                skillsoft_setActivityCompletionState($track->userid, $track->skillsoftid, $track->value, $track->timecompleted);
+            }
+            $tracks->close();
+        }
+        $moduleinstances->close();
+
+        upgrade_mod_savepoint(true, 2015082000, 'skillsoft');
+        $result = true;
+    }
+
 	return $result;
 }
