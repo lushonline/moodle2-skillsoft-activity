@@ -18,7 +18,8 @@ if (!isset($cm)) {
     $cm = get_coursemodule_from_instance('skillsoft', $skillsoft->id);
 }
 
-$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+//$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+$contextmodule = context_MODULE::instance($cm->id);
 
 $row = array();
 $tabs  = array();
@@ -28,11 +29,11 @@ $activated = array();
 $infourl = new moodle_url('/mod/skillsoft/view.php', array('id'=>$cm->id));
 $row[] = new tabobject('info', $infourl, get_string('skillsoft_info', 'skillsoft'));
 
-$reporturl = new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id, 'user'=>'true', 'attempt'=>$attempt));
+$reporturl = new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id, 'user'=>'true'));
 $row[] = new tabobject('reports', $reporturl, get_string('skillsoft_results', 'skillsoft'));
 
 if (has_capability('mod/skillsoft:viewreport', $contextmodule)) {
-	$reportallurl = new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id, 'attempt'=>$attempt));
+	$reportallurl = new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id));
     $row[] = new tabobject('allreports', $reportallurl, get_string('skillsoft_allresults', 'skillsoft'));
 }
 $tabs[] = $row;

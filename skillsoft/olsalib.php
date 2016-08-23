@@ -338,7 +338,9 @@ class olsa_soapclient extends SoapClient{
 						
 						//Force CURL to use TLSv1 or later as SSLv3 deprecated on Skillsoft servers
 						//Bug Fix - http://code.google.com/p/moodle2-skillsoft-activity/issues/detail?id=17
-						curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+						curl_setopt($ch, CURLOPT_SSLVERSION, 6);
+				        curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
+
 
 						if (!empty($CFG->proxyhost)) {
 							// SOCKS supported in PHP5 only

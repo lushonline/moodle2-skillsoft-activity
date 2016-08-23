@@ -47,7 +47,9 @@ require_login($course->id, false, $cm);
 
 //$PAGE->set_context(CONTEXT_MODULE, $cm->id);
 
-$contextmodule = get_context_instance(CONTEXT_MODULE,$cm->id);
+//$contextmodule = get_context_instance(CONTEXT_MODULE,$cm->id);
+$contextmodule = context_MODULE::instance($cm->id);
+
 
 //Retrieve the localisation strings
 $strskillsoft = get_string('modulename', 'skillsoft');
@@ -110,8 +112,10 @@ if ($user) {
 	if (empty($attempt)) {
 
 		//Show all attempts
-		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);
+		//add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);
 
+		skillsoft_event_log(SKILLSOFT_EVENT_REPORT_VIEWED, $skillsoft, $contextmodule, $cm);
+		
 		$maxattempts = skillsoft_get_last_attempt($skillsoft->id,$USER->id);
 		if ($maxattempts == 0) {
 			$maxattempts = 1;
@@ -145,7 +149,8 @@ if ($user) {
 		}
 
 	} else {
-		add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);		$row = array();
+		//add_to_log($course->id, 'skillsoft', 'view report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View report for Asset: '.$skillsoft->name);		$row = array();
+		skillsoft_event_log(SKILLSOFT_EVENT_REPORT_VIEWED, $skillsoft, $contextmodule, $cm);
 		$score = '&nbsp;';
 		if ($trackdata = skillsoft_get_tracks($skillsoft->id,$USER->id,$attempt)) {
 			$row[] = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id,'user'=>'true','attempt'=>$trackdata->attempt)).'">'.$trackdata->attempt.'</a>';
@@ -172,7 +177,9 @@ if ($user) {
 	}
 } else {
 	require_capability('mod/skillsoft:viewreport', $contextmodule);
-	add_to_log($course->id, 'skillsoft', 'view all report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View all users report for Asset: '.$skillsoft->name);
+	//add_to_log($course->id, 'skillsoft', 'view all report', 'report.php?id='.$cm->id."&user=".($user ? 'true' : 'false')."&attempt=".$attempt, 'View all users report for Asset: '.$skillsoft->name);
+	skillsoft_event_log(SKILLSOFT_EVENT_REPORT_VIEWED, $skillsoft, $contextmodule, $cm);
+	
 
 	$currenttab = 'allreports';
 	require($CFG->dirroot . '/mod/skillsoft/tabs.php');

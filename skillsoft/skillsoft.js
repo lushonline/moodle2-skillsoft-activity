@@ -1,7 +1,7 @@
  /*
  * @package		mod-skillsoft
- * @author		$Author$
- * @version		SVN: $Header$
+ * @author		$Author: martinholden1972@googlemail.com $
+ * @version		SVN: $Header: https://moodle2-skillsoft-activity.googlecode.com/svn/branches/dev/skillsoft.js 158 2014-12-02 12:12:07Z martinholden1972@googlemail.com $
  * @copyright	2009-2014 Martin Holden
  * @license		http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

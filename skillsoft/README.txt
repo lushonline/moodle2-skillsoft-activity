@@ -1,8 +1,7 @@
 SkillSoft Asset Module
 Author: Martin Holden, SkillSoft http://www.skillsoft.com
-Updated: December 2014
-Module Version: 2015031901
-SVN: $Header$
+Updated: August 2016
+Module Version: 2016082300
 
 ================================================================
 
@@ -11,45 +10,21 @@ Moodle Compatibility
 This plugin will work with Moodle 2.0. It is developed as a Moodle plugin activity module.
 
 It has been tested with:
-2.3.6+ (Build: 20130322)
-2.4.3+ (Build: 20130322)
-2.5.1+ (Build: 20130808)
 2.6.1+ (Build: 20140131)
 2.7.1+ (Build: 20140821)
 2.8.1+ (Build: 20141128)
+2.9.7 (Build: 20160711)
+3.0.5+ (Build: 20160817)
 
 Known Issues/Limitations
 ------------------------
 * Backup and Restore have been partially implemented in this release, supporting only the Skillsoft Asset - not any tracking data.
 * Support for Multiple Completions when using "Track to OLSA" is only supported using the "Custom Report" mode.
 
-Upgrading from Moodle 1.9.x
----------------------------
-It is neccesary to first upgrade the existing SkillSoft module to 20110731xx
-http://code.google.com/p/moodle-skillsoft-activity/downloads/list
-
-After updating the module and allowing Moodle to apply the module changes, you
-can safely follow the normal process for updating to Moodle 2.x
-
-Upgrading from Moodle 2.x to 2.2.x
-----------------------------------
-It is neccesary to first upgrade the existing SkillSoft module to 20120229xx
-http://code.google.com/p/moodle2-skillsoft-activity/downloads/list
-
 PHP Requirement in additional to Moodle 2.x
 -------------------------------------------
 PHP SOAP Client enabled in PHP.INI
 cURL enabled in PHP.INI
-
-Download Binary
----------------
-The ZIP file containing the activity is located at::
-http://code.google.com/p/moodle2-skillsoft-activity/downloads/list
-
-Source (SVN)
-------------
-The source code for this plugin is located at::
-http://code.google.com/p/moodle2-skillsoft-activity/
 
 Install
 -------

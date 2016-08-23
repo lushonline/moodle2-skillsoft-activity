@@ -444,7 +444,8 @@ function skillsoft_print_recent_activity($course, $isteacher, $timestart) {
 	$names = array();
 	foreach ($records as $id => $record){
 		if ($cm = get_coursemodule_from_instance('skillsoft', $record->id, $course->id)) {
-			$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+			//$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+			$context = context_MODULE::instance($cm->id);
 			if (has_capability('mod/skillsoft:viewreport', $context)) {
 				$name = '<a href="'.new moodle_url('/mod/skillsoft/report.php', array('id'=>$cm->id)).'">'.$record->name.'</a>'.'&nbsp;';
 				if ($record->countlaunches > 1) {

@@ -28,6 +28,10 @@ define('IDENTIFIER_USERNAME', 'username');
 define('SSO_ASSET_ACTIONTYPE_LAUNCH', 'launch');
 define('SSO_ASSET_ACTIONTYPE_SUMMARY', 'summary');
 
+define('SKILLSOFT_EVENT_ACTIVITY_VIEWED',0);
+define('SKILLSOFT_EVENT_ACTIVITY_MANAGEMENT_VIEWED',1);
+define('SKILLSOFT_EVENT_REPORT_VIEWED',2);
+
 /**
  * Returns an array of the array of what grade options
  *
@@ -143,7 +147,7 @@ function skillsoft_view_display($skillsoft, $user, $return=false) {
 		
 		$launcher = $skillsoft->launch;
 		//Section 508 Enhancement - add x508 value of $user->screenreader
-		if ($user->screenreader == 1) {
+		if (isset($user->screenreader) && $user->screenreader == 1) {
 			$launcher .= $connector.'x508=1';
 		}
 		$launcher .= $connector.'aicc_sid='.$newkey.'&aicc_url='.$CFG->wwwroot.'/mod/skillsoft/aicchandler.php';
@@ -1343,4 +1347,64 @@ function skillsoft_process_received_customreport($handle, $trace=false, $prefix=
 	if ($trace) {
 		mtrace($prefix.get_string('skillsoft_customreport_process_end','skillsoft').' (took '.$duration.' seconds)');
 	}
+}
+
+function skillsoft_get_moodle_version_major() { 
+     global $CFG; 
+  
+     $version_array = explode('.', $CFG->version); 
+     return $version_array[0]; 
+} 
+
+function skillsoft_event_log_standard($event_type, $skillsoft, $context, $cm) {
+    $context = context_module::instance($cm->id);
+    $event_properties = array('context' => $context, 'objectid' => $skillsoft->id);
+
+    switch ($event_type) {
+        case SKILLSOFT_EVENT_ACTIVITY_VIEWED:
+            $event = \mod_skillsoft\event\course_module_viewed::create($event_properties);
+            break;
+        case SKILLSOFT_EVENT_ACTIVITY_MANAGEMENT_VIEWED:
+            $event = \mod_skillsoft\event\course_module_instance_list_viewed::create($event_properties);
+            break;
+        case SKILLSOFT_EVENT_REPORT_VIEWED:
+            $event = \mod_skillsoft\event\report_viewed::create($event_properties);
+            break;            
+    }
+    $event->trigger();
+}
+
+function skillsoft_event_log_legacy($event_type, $skillsoft, $context, $cm) {
+    global $DB;
+
+    switch ($event_type) {
+        case SKILSOFT_EVENT_ACTIVITY_VIEWED:
+            $event = 'view';
+            break;
+        case SKILLSOFT_EVENT_ACTIVITY_MANAGEMENT_VIEWED:
+            $event = 'view all';
+            break;
+        case constant(SKILLSOFT_EVENT_REPORT_VIEWED) :    
+        	$event = "view report";
+        	break;
+        default:
+            return;
+    }
+    $course = $DB->get_record('course', array('id' => $skillsoft->course), '*', MUST_EXIST);
+
+    add_to_log($course->id, 'skillsoft', $event, '', $skillsoft->name, $cm->id);
+}
+
+function skillsoft_event_log($event_type, $skillsoft, $context, $cm) {
+    global $CFG;
+
+    $version_major = skillsoft_get_moodle_version_major();
+    if ( $version_major < '2014051200' ) {
+        //This is valid before v2.7
+        skillsoft_event_log_legacy($event_type, $skillsoft, $context, $cm);
+
+    } else {
+        //This is valid after v2.7
+        skillsoft_event_log_standard($event_type, $skillsoft, $context, $cm);
+    }
 }

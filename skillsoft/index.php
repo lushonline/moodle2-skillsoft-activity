@@ -25,7 +25,9 @@ require_course_login($course);
 
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'skillsoft', 'view all activity', 'index.php?id='.$course->id, 'View all SkillSoft Assets');
+//add_to_log($course->id, 'skillsoft', 'view all activity', 'index.php?id='.$course->id, 'View all SkillSoft Assets');
+$context = context_course::instance($course->id);
+skillsoft_event_log(SKILLSOFT_EVENT_ACTIVITY_MANAGEMENT_VIEWED, $skillsoft, $context, $cm);
 
 //Retrieve the localisation strings
 
@@ -73,7 +75,9 @@ if ($usesections) {
 
 foreach ($skillsofts as $skillsoft) {
 
-	$context = get_context_instance(CONTEXT_MODULE,$skillsoft->coursemodule);
+	//$context = get_context_instance(CONTEXT_MODULE,$skillsoft->coursemodule);
+	$context = context_MODULE::instance($skillsoft->coursemodule);
+	
 	$tt = "";
 	if ($usesections) {
 		if ($skillsoft->section) {

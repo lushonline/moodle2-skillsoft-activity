@@ -10,6 +10,7 @@
 defined('MOODLE_INTERNAL') || die();
 $string['pluginadministration'] = 'Skillsoft Asset';
 $string['pluginname'] = 'Skillsoft Asset';
+$string['skillsoft:addinstance'] = 'Add a new Skillsoft activity';
 
 $string['modulename'] = 'Skillsoft Asset';
 $string['modulename_help'] = '<p>This module provides a way to simply create a new activity for a Skillsoft OLSA Hosted asset that will be tracked by Moodle</p>

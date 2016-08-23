@@ -13,7 +13,10 @@ require_once($CFG->dirroot.'/mod/skillsoft/olsalib.php');
 global $CFG;
 
 $url = new moodle_url('/mod/skillsoft/olsadiag.php');
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+
+$context = context_SYSTEM::instance();
+
 
 require_login();
 require_capability('moodle/site:config', $context);
@@ -254,7 +257,7 @@ if ($continue) {
 	} else {
 		//Now compare with current time.
 		//Is it faster
-		if ($result->isfast) {
+		if ($result->isfast && $result->diff > 1) {
 			$continue = false;
 			$html .= $fail;
 			$html .= 'Moodle Server Time is faster than OLSA Server. The OLSA Authentication Process will fail';
